@@ -1,2 +1,2 @@
 # letalski-promet
-<img src="./er-diagram.svg">
+<img src="./er_diagram.svg">
