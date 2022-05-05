@@ -1,0 +1,10 @@
+insert into letalo (id, stevilo_sedezev, model, druzba) values (0,190, "Boeing 707","British Airways" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (1,220, "Airbus A320", "Air France" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (2,150, "Boeing 727", "Turkish Airlines" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (3,190, "Boeing 757", "ITA Airways" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (4,290, "Boeing 787", "Iberia");
+insert into letalo (id, stevilo_sedezev, model, druzba) values (5,100, "Boeing 737", "Lufthansa" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (6,300, "Boeing 777", "Iberia");
+insert into letalo (id, stevilo_sedezev, model, druzba) values (7,150, "Boeing 747", "Lufthansa");
+insert into letalo (id, stevilo_sedezev, model, druzba) values (8,140, "Airbus A380","Turkish Airlines" );
+insert into letalo (id, stevilo_sedezev, model, druzba) values (9,150, "Boeing 767", "Swiss");
