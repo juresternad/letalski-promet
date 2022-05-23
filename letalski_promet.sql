@@ -1,11 +1,32 @@
+
+DROP TABLE IF EXISTS delavec_na_letu CASCADE;
+DROP TABLE IF EXISTS druzba CASCADE;
+DROP TABLE IF EXISTS karta CASCADE;
+DROP TABLE IF EXISTS let CASCADE;
+DROP TABLE IF EXISTS letalo CASCADE;
+
+
+CREATE TABLE druzba (
+    id INTEGER PRIMARY KEY,
+    ime_druzbe TEXT
+);
+
+CREATE TABLE letalo (
+    id INTEGER PRIMARY KEY,
+    stevilo_sedezev INTEGER NOT NULL,
+    model TEXT NOT NULL,
+    druzba INTEGER NOT NULL REFERENCES druzba(id)
+);
+
 CREATE TABLE let (
     stevilka_leta INTEGER PRIMARY KEY,
     vzletno_letalisce TEXT NOT NULL,
     pristajalno_letalisce TEXT NOT NULL,
     cas_prihoda DATE NOT NULL,
-    cas_odhoda DATE NOT NULL
+    cas_odhoda DATE NOT NULL,
+    letalo_id INTEGER NOT NULL REFERENCES letalo(id),
+    ekipa INTEGER NOT NULL
 );
-
 
 
 CREATE TABLE delavec_na_letu (
@@ -13,8 +34,7 @@ CREATE TABLE delavec_na_letu (
     ime TEXT NOT NULL,
     delo TEXT NOT NULL,
     starost INTEGER NOT NULL,
-    zaposlen INTEGER NOT NULL REFERENCES let(stevilka_leta),
-    upravlja INTEGER NOT NULL REFERENCES let(stevilka_leta)
+    ekipa INTEGER NOT NULL
 );
 
 
@@ -29,20 +49,6 @@ CREATE TABLE karta (
     stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
 );
 
-CREATE TABLE druzba (
-    id INTEGER PRIMARY KEY,
-    ime_druzbe TEXT
-);
-
-
-
-CREATE TABLE letalo (
-    id INTEGER PRIMARY KEY,
-    stevilo_sedezev INTEGER NOT NULL,
-    razred TEXT NOT NULL,
-    model TEXT NOT NULL,
-    druzba INTEGER NOT NULL REFERENCES druzba(id)
-);
 
 -- dodelimo pravice 
 GRANT ALL ON DATABASE sem2022_gasperk TO gasperk;
