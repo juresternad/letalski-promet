@@ -1,5 +1,5 @@
 import psycopg2, psycopg2.extensions, psycopg2.extras
-from bottle import route, run, abort, get, post, debug, template
+from bottle import *
 import auth
 import os
 
@@ -15,22 +15,28 @@ debug(True)
 ####################################################
 @get('/') # landing page
 def index():
-    cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, cas_odhoda, cas_prihoda) FROM let")
+    cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, cas_odhoda, cas_prihoda) FROM let;")
     leti = cur.fetchall()
-    # TODO
-    # naredi form za vnos podatkov
-    # lepo izpisi po alinejah
-    print(leti[0])
     return template('index.html', leti=leti)
 
-@get('leti/<povratna>/<iz>/<do>/<datum_odhoda>/<datum_vrnitve>/<st_kart>/') # poizvedba za let
-def let(povratna, iz, do, datum_odhoda, datum_vrnitve, st_kart="1"):
-    cur.execute("SELECT * FROM let WHERE od = %s AND do = %s AND datum_odhoda = %s AND datum_vrnitve = %s", (od, do, datum_odhoda, datum_vrnitve))
-    return "blah"
+@post('/leti/') # poizvedba za let
+def let():
+    iz = request.forms.iz
+    do = request.forms.do
+    datum_odhoda = request.forms.datum_odhoda
+    datum_vrnitve = request.forms.datum_vrnitve
+    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND cas_prihoda = %s AND cas_odhoda = %s", (iz, do, datum_odhoda, datum_vrnitve))
+    ustrezni_leti = cur.fetchall()
+    if ustrezni_leti == []:
+        return '<h2>Ni ustreznih letov!</h2>'
+    else:
+        return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
-@post('/let/<id_leta>/st_kart/<st_kart>/')
-def kupi_karto(id_leta, st_kart):
-    pass
+# @get('/kupi/<id_leta>/')
+# def kupi_karto(id_leta, st_kart=1):
+#     cur.execute("insert into karta (st_narocila, razred, ime_potnika, cena, stevilka_sedeza, stevilka_leta) values (9,150, 'Boeing 767', 0);")
+#     return f"uspešno ste kupili karto za let {id_leta}"
+
 
 ####################################################
 

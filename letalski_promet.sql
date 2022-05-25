@@ -41,12 +41,27 @@ CREATE TABLE delavec_na_letu (
 
 CREATE TABLE karta (
     stevilka_narocila INTEGER PRIMARY KEY,
-    druzba TEXT NOT NULL,
     razred TEXT NOT NULL,
     ime_potnika TEXT NOT NULL,
     cena INTEGER NOT NULL,
     stevilka_sedeza TEXT NOT NULL,
     stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
+);
+
+CREATE TABLE uporabnik (
+    emso INTEGER PRIMARY KEY,
+    ime TEXT NOT NULL,
+    priimek TEXT NOT NULL,
+    uporabnisko_ime TEXT UNIQUE NOT NULL,
+    geslo TEXT NOT NULL, -- ali je taprav type
+    email TEXT NOT NULL, -- type?
+    telefon TEXT NOT NULL, -- type?
+    datum_rojstva DATE NOT NULL,
+    spol TEXT NOT NULL,
+    drzava TEXT NOT NULL,
+    kraj TEXT NOT NULL,
+    naslov TEXT NOT NULL,
+    posta TEXT NOT NULL,
 );
 
 

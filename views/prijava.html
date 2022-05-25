@@ -23,31 +23,36 @@
     </nav>
 
     <div class="container">
-        <br><br><br><br><br><br><br>
-        <form action="/leti/" method="post">
-            <label for="vzletalisce">Vzletalisce:</label>
-            <input type="text" name="iz">
-            <label for="pristajalisce">Pristajalisce:</label>
-            <input type="text" name="do">
-            <label for="start">Odletim:</label>
-            <input type="date" name="datum_odhoda" value="2022-06-01">
-            <label for="start">Priletim nazaj:</label>
-            <input type="date" name="datum_vrnitve" value="2022-06-07">
-            <button class="btn btn-primary" type="submit">Išči!</button>
+        <br><br><br><br>
+        <form action="/prijava" method="post" autocomplete="off">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="username">Uporabniško ime</label>
+                <input id="username" name="username" type="text" class="form-control" required
+                  oninput="this.setCustomValidity('')"
+                  oninvalid="this.setCustomValidity('Obvezno polje')"
+                  />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="password">Geslo</label>
+                <input id="password" name="password" type="password" class="form-control" required
+                  oninput="this.setCustomValidity('')"
+                  oninvalid="this.setCustomValidity('Obvezno polje')"
+                  />
+              </div>
+            </div>
+            <div class="form-row col">
+              <button class="btn btn-primary" type="submit">
+                Prijava
+              </button>
+            </div>
+          
         </form>
-        <br><br><br><br><br><br><br>
-        <h3>Last-minute leti</h3>
-        <ul style="font-size: 120%">
-            % for let in leti:
-            <li>{{let}}
-                <form action="/kupi/{{let}}" method="get">
-                    <button type="submit">Kupi</button>
-                </form>
-            </li>
-            % end
-        </ul>
-
     </div>
+
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
