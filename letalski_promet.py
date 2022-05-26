@@ -32,6 +32,14 @@ def let():
     else:
         return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
+@get('/prijava') 
+def prijava():
+    return template('prijava.html')
+
+@get('/registracija') 
+def registracija():
+    return template('registracija.html')
+
 # @get('/kupi/<id_leta>/')
 # def kupi_karto(id_leta, st_kart=1):
 #     cur.execute("insert into karta (st_narocila, razred, ime_potnika, cena, stevilka_sedeza, stevilka_leta) values (9,150, 'Boeing 767', 0);")

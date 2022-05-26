@@ -18,21 +18,34 @@
     <nav class="navbar navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="#">Kupi letalsko karto</a>
-            <a class="text-white" href="/odjava">Odjava</a>
+            <a class="text-white" href="/prijava">Prijava</a>
+            <a class="text-white" href="/registracija">Registracija</a>
         </div>
     </nav>
 
     <div class="container">
         <br><br><br><br><br><br><br>
         <form action="/leti/" method="post">
-            <label for="vzletalisce">Vzletalisce:</label>
-            <input type="text" name="iz">
-            <label for="pristajalisce">Pristajalisce:</label>
-            <input type="text" name="do">
+            <label for="vzletalisce">Vzletališče:</label>
+            <input list ="letalisca" name="iz" autocomplete="on" placeholder="Ime letališča">
+            <datalist id="letalisca">
+                <option value="Madrid Barajas Airport (MAD)">
+                <option value="Barcelona Airport (BCN)">
+                <option value="Rome Fiumicino Airport (FCO)">
+                <option value="Zurich Airport (ZRH)">
+                <option value="Athens Airport (ATH)">
+                <option value="Munich International Airport (MUC)">
+                <option value="Amsterdam Airport (AMS)">
+                <option value="Frankfurt International Airport (FRA)">
+                <option value="London Heathrow Airport (LHR)">
+                <option value="Paris Charles de Gaulle Airport (CDG)">
+              </datalist>
+            <label for="pristajalisce">Pristajališče:</label>
+            <input list ="letalisca" name="do" autocomplete="on" placeholder="Ime letališča">
             <label for="start">Odletim:</label>
-            <input type="date" name="datum_odhoda" value="2022-06-01">
+            <input type="date" name="datum_odhoda" value="2022-06-14">
             <label for="start">Priletim nazaj:</label>
-            <input type="date" name="datum_vrnitve" value="2022-06-07">
+            <input type="date" name="datum_vrnitve" value="2022-06-14">
             <button class="btn btn-primary" type="submit">Išči!</button>
         </form>
         <br><br><br><br><br><br><br>
