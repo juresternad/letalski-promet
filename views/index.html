@@ -16,15 +16,17 @@
 
 <body>
     <nav class="navbar navbar-dark bg-primary">
-        <div class="container">
+        <div class=>
             <a class="navbar-brand" href="#">Kupi letalsko karto</a>
+        </div>
+        <div class="navbar-nav ml-auto">
             <a class="text-white" href="/prijava">Prijava</a>
-            <a class="text-white" href="/registracija">Registracija</a>
+            <a class="text-white" href="/registracija">Registracija</a> 
         </div>
     </nav>
 
     <div class="container">
-        <br><br><br><br><br><br><br>
+        <br><br><br><br>
         <form action="/leti/" method="post">
             <label for="vzletalisce">Vzletališče:</label>
             <input list ="letalisca" name="iz" autocomplete="on" placeholder="Ime letališča">
@@ -48,11 +50,13 @@
             <input type="date" name="datum_vrnitve" value="2022-06-14">
             <button class="btn btn-primary" type="submit">Išči!</button>
         </form>
-        <br><br><br><br><br><br><br>
+        <br><br><br><br>
         <h3>Last-minute leti</h3>
         <ul style="font-size: 120%">
             % for let in leti:
-            <li>{{let}}
+            <li><b>Kraj odhoda: </b>{{let[0]}}  <br>
+                <b>Kraj prihoda: </b>{{let[1]}} <br>
+                <b>Datum odhoda: </b>{{let[2]}}
                 <form action="/kupi/{{let}}" method="get">
                     <button type="submit">Kupi</button>
                 </form>
