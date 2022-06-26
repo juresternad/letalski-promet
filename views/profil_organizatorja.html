@@ -1,0 +1,16 @@
+<table id="izpis2" class="table table-hover">
+  <tr>
+    <th>Emšo</th>
+    <th>Ime</th>
+    <th>Priimek</th>
+    <th>Uporabniško ime</th>
+  </tr>
+  %for (emso, ime, priimek, uporabnisko_ime) in organizator_letov:
+  <tr>
+    <td>{{emso}}</td>
+    <td>{{ime}}</td>
+    <td>{{priimek}}</td>
+    <td>{{uporabnisko_ime}}</td>
+  </tr>
+  %end
+</table>

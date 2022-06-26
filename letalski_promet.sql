@@ -4,6 +4,9 @@ DROP TABLE IF EXISTS druzba CASCADE;
 DROP TABLE IF EXISTS karta CASCADE;
 DROP TABLE IF EXISTS let CASCADE;
 DROP TABLE IF EXISTS letalo CASCADE;
+DROP TABLE IF EXISTS uporabnik CASCADE;
+DROP TABLE IF EXISTS organizator_letov CASCADE;
+
 
 
 CREATE TABLE druzba (
@@ -52,16 +55,17 @@ CREATE TABLE uporabnik (
     emso INTEGER PRIMARY KEY,
     ime TEXT NOT NULL,
     priimek TEXT NOT NULL,
+    email TEXT NOT NULL,
     uporabnisko_ime TEXT UNIQUE NOT NULL,
-    geslo TEXT NOT NULL, -- ali je taprav type
-    email TEXT NOT NULL, -- type?
-    telefon TEXT NOT NULL, -- type?
-    datum_rojstva DATE NOT NULL,
-    spol TEXT NOT NULL,
-    drzava TEXT NOT NULL,
-    kraj TEXT NOT NULL,
-    naslov TEXT NOT NULL,
-    posta TEXT NOT NULL,
+    geslo TEXT NOT NULL
+);
+
+CREATE TABLE organizator_letov (
+    emso INTEGER PRIMARY KEY,
+    ime TEXT NOT NULL,
+    priimek TEXT NOT NULL,
+    uporabnisko_ime TEXT UNIQUE NOT NULL,
+    geslo TEXT NOT NULL 
 );
 
 

@@ -10,7 +10,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>index</title>
+    <title>dodaj_organizatorja</title>
     <link rel="stylesheet" type="text/css" href="/static/stili.css" />
     <script src="/static/banka.js"></script>
 </head>
@@ -23,7 +23,7 @@
     </nav>
 
     <div class="container">
-        <form action="/registracija" method="post" autocomplete="off">
+        <form action="/dodaj_organizatorja" method="post" autocomplete="off">
 
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -47,23 +47,6 @@
                         oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
                 </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label for="email">Email</label>
-                    <input id="email" name="email" type="text" class="form-control" required
-                        oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Napacna oblika')" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label for="telefon">Telefon</label>
-                    <input id="telefon" name="telefon" type="text" class="form-control" required
-                        oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
-                </div>
-            </div>
-
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="username">Uporabniško ime</label>
@@ -78,24 +61,12 @@
                         oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="password2">Ponovno geslo</label>
-                    <input id="password2" name="password2" type="password" class="form-control" required
-                        oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
-                </div>
-            </div>
             <div class="form-row col">
                 <button class="btn btn-primary" type="submit">
-                    Registriraj se!
+                    Dodaj organizatorja
                 </button>
             </div>
     </form>
-    </div>
-
-    <div class="form-row d-flex">
-        <p>Že imate račun? <a href="/prijava">Prijava</a>
-            
     </div>
 
 
