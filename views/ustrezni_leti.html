@@ -14,7 +14,7 @@
     <body>
         <nav class="navbar navbar-dark bg-primary">
             <div class="container">
-                <a class="navbar-brand" href="#">Kupi letalsko karto</a>
+                <a class="navbar-brand" href="/">Kupi letalsko karto</a>
                 <a class="text-white" href="/odjava">Odjava</a>
             </div>                        
         </nav>
@@ -27,7 +27,7 @@
                 <li><b>Kraj odhoda: </b>{{let[1]}}  <br>
                     <b>Kraj prihoda: </b>{{let[2]}} <br>
                     <b>Datum odhoda: </b>{{let[3]}}
-                    <form action="/kupi/{{let}}" method="get">
+                    <form action="/kupi/{{let[5]}}" method="get">
                         <button type="submit">Kupi</button>
                     </form>
                 </li>

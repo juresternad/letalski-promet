@@ -26,11 +26,13 @@ debug(True)
 
 @get('/')  # landing page
 def index():
+    # TODO pogruntaj napako in mogoce dodaj try catch
     cur.execute(
-        "SELECT (vzletno_letalisce, pristajalno_letalisce, cas_odhoda, cas_prihoda) FROM let;")
+        # TODO dodaj omejitev na top 20
+        "SELECT (vzletno_letalisce, pristajalno_letalisce, cas_odhoda, cas_prihoda, stevilka_leta) FROM let;")
     leti = cur.fetchall()
     # grdo sej vem :()
-    print(leti[0][0].split(','))
+    # print(leti[0][0].split(','))
     nleti = []
     for let in leti:
         let = let[0].split(',')
@@ -38,8 +40,9 @@ def index():
         pristajalno = let[1][1:-1]
         cas_odhoda = let[2]
         cas_prihoda = let[3][:-1]
-        nleti.append([vzletno, pristajalno, cas_odhoda, cas_prihoda])
-    return template('index.html', leti=nleti)
+        stevilka_leta = int(let[4][:-1]) # TODO mogoce se da lepse
+        nleti.append([vzletno, pristajalno, cas_odhoda, cas_prihoda, stevilka_leta])
+    return template('index.html', leti=nleti) # TODO ce si prijavljen naj desno zgoraj pise username in ne prijava in registracija
 
 
 @post('/leti/')  # poizvedba za let
@@ -57,16 +60,39 @@ def let():
         return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
 
-# @get('/kupi/<id_leta>/')
-# def kupi_karto(id_leta, st_kart=1):
-#     cur.execute("insert into karta (st_narocila, razred, ime_potnika, cena, stevilka_sedeza, stevilka_leta) values (9,150, 'Boeing 767', 0);")
-#     return f"uspešno ste kupili karto za let {id_leta}"
 
-# TODO
+# TODO stevilo kart
+@get('/kupi/<id_leta>')
+def nakup_karte(id_leta):
+    try:
+        cur.execute("SELECT * FROM let WHERE stevilka_leta = %s", (id_leta, ))
+        let = cur.fetchall()[0][:5]
+        return template('nakup_karte.html', let=let)
+    except:
+        return "Izbrani let ni na voljo!"
+
+@post('/kupi/<id_leta>')
+def kupi_karto(id_leta):
+    # return f"kupili ste {id_leta}"
+    username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    if username is not None:
+      try:
+        # TODO stevilka_narocila mora biti auto generirana (to naredis v SQL)
+        # TODO SELECT ime from uporabnik where uporabnisko_ime=username
+        cur.execute("insert into karta (stevilka_narocila, razred, ime_potnika, cena, stevilka_sedeza, stevilka_leta) values (%s,%s,%s,%s,%s,%s);", 
+        (4, "economy", username, 100, "3", id_leta))
+        return template('uspesen_nakup.html', id_leta=id_leta)
+      except:
+        return "Žal nakup karte ni bil uspešen!"
+    else:
+        redirect(url('/prijava'))
+
+
+
 ############################################
 ### Registracija, prijava
 ############################################
-def nastaviSporocilo(sporocilo=None):
+def nastaviSporocilo(sporocilo=None): # TODO pri prijavi ne izpisuje sporocila
     # global napakaSporocilo
     staro = request.get_cookie("sporocilo", secret=skrivnost)
     if sporocilo is None:
@@ -177,7 +203,7 @@ def prijava_post():
     except:
         potnik_geslo = None
 
-    curr = conn.cursor()
+    curr = conn.cursor() # TODO delete this because it is not used
     if potnik_geslo is None and organizator_geslo is None:
         nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni')
         redirect(url('/prijava'))
@@ -210,7 +236,9 @@ def profil_uporabnika():
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
         "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s", (username, ))
-    uporabnik = cur
+    uporabnik = cur.fetchall()
+    print("####################", uporabnik)
+    # TODO naj izpise se kupljene lete
     return template('profil_uporabnika.html', uporabnik=uporabnik, napaka=napaka)
 
 @get('/profil_organizatorja')
@@ -219,8 +247,9 @@ def profil_organizatorja():
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
         "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s", (username, ))
-    uporabnik = cur
-    return template('profil_organizatorja.html', uporabnik=uporabnik, napaka=napaka)
+    organizator_letov = cur.fetchall()
+    print()
+    return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka)
 
 ############################################
 ### Dodajanje organizatorja

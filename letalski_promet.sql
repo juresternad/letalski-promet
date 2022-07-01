@@ -60,6 +60,7 @@ CREATE TABLE uporabnik (
     geslo TEXT NOT NULL
 );
 
+-- TODO: organizator letov je uporabnik s posebnim dovoljenjem
 CREATE TABLE organizator_letov (
     emso INTEGER PRIMARY KEY,
     ime TEXT NOT NULL,

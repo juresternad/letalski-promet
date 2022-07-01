@@ -9,50 +9,41 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>index</title>
-    <link rel="stylesheet" type="text/css" href="/static/stili.css" />
-    <!-- <script src="/static/banka.js"></script> -->
+    <title>Nakup karte</title>
 </head>
 
 <body>
     <nav class="navbar navbar-dark bg-primary">
-        <div class="container">
+        <div class=>
             <a class="navbar-brand" href="/">Kupi letalsko karto</a>
-            <a class="text-white" href="/odjava">Odjava</a>
+        </div>
+        <div class="navbar-nav ml-auto">
+            <a class="text-white" href="/prijava">Prijava</a>
+            <a class="text-white" href="/registracija">Registracija</a> 
         </div>
     </nav>
 
     <div class="container">
         <br><br><br><br>
-        <form action="/prijava" method="post" autocomplete="off">
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="username">Uporabniško ime</label>
-                <input id="username" name="username" type="text" class="form-control" required
-                  oninput="this.setCustomValidity('')"
-                  oninvalid="this.setCustomValidity('Obvezno polje')"
-                  />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="password">Geslo</label>
-                <input id="password" name="password" type="password" class="form-control" required
-                  oninput="this.setCustomValidity('')"
-                  oninvalid="this.setCustomValidity('Obvezno polje')"
-                  />
-              </div>
-            </div>
-            <div class="form-row col">
-              <button class="btn btn-primary" type="submit">
-                Prijava
-              </button>
-            </div>
-          
-        </form>
+        <div>
+          <p>{{let}}</p>
+          <b>Kraj odhoda: </b>{{let[1]}}  <br>
+          <b>Kraj prihoda: </b>{{let[2]}} <br>
+          <b>Datum odhoda: </b>{{let[3]}} <br>
+          <b>Cena: </b> 100 eur
+          <p>stevilka_narocila INTEGER PRIMARY KEY,<br>
+            razred TEXT NOT NULL,<br>
+            ime_potnika TEXT NOT NULL,<br>
+            cena INTEGER NOT NULL,<br>
+            stevilka_sedeza TEXT NOT NULL<br>
+            stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)</p>
+          <form action="/kupi/{{let[0]}}" method="post">
+            <button type="submit">Kupi in plačaj</button>
+          </form>
+        </div>
+        
+
     </div>
-
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
