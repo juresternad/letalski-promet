@@ -305,3 +305,53 @@ cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # zazenemo/povezemo se s streznikom
 run(host='localhost', port=SERVER_PORT, reloader=True)
+
+
+###################################################
+@get('/leti/<od:text>/<do:text>/<datum_odhoda:int>/<datum_prihoda:int>/<razred:text>')
+def ustrezni_leti(od, do, datum_odhoda, datum_prihoda, razred):
+    
+    # cur.execute("SELECT * FROM leti WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND cas_odhoda, cas_prihoda > %s ORDER BY znesek, id", [od, do, datum_odhoda, datum_prihoda, razred])
+    cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce) FROM leti WHERE ...")
+    # ustvarimo seznam 
+    povezave = []
+    for i in cur:
+        povezave.append(i)
+    
+    vozlisca = []
+
+    cur.execute("SELECT DISTINCT vzletno_letalisce FROM leti WHERE ...")
+    for i in cur:
+        vozlisca.append(i)
+
+    bfs(od, do)
+    return template('transakcije.html', x=x, transakcije=cur)
+
+def dijkstraish(G, s, t, C, D, H):
+    ds = [float('infinity')]*(n+1)
+    hs = [float('infinity')]*(n+1)
+    cs = [float('infinity')]*(n+1)
+    ds[s] = 0
+    hs[s] = 0
+    cs[s] = 0
+    pq = [(0, 0, 0, s)]
+    while pq:
+        # current distance, cost, height, node
+        cur_d, cur_c, cur_h, cur_node = heapq.heappop(pq)
+        # check neighbours
+        for (h, d, c, s) in G[cur_node]:
+            h = max(cur_h, h)
+            d += cur_d
+            c += cur_c
+            if d < ds[s] and h <= H and d <= D and c <= C:
+                hs[s] = h
+                cs[s] = c
+                ds[s] = d
+                heapq.heappush(pq, (d, c, h, s)) # order in tuple is not random
+            # Maybe there is lower cost with same distance!:
+            elif d == ds[s] and c < cs[s] and h <= H and d <= D and c <= C:
+                hs[s] = h
+                cs[s] = c
+                ds[s] = d
+                heapq.heappush(pq, (d, c, h, s)) # order in tuple is not random
+    return(hs[t], ds[t], cs[t])
