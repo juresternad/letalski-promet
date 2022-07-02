@@ -22,11 +22,13 @@ CREATE TABLE letalo (
 );
 
 CREATE TABLE let (
-    stevilka_leta INTEGER PRIMARY KEY,
+    stevilka_leta SERIAL PRIMARY KEY,
     vzletno_letalisce TEXT NOT NULL,
     pristajalno_letalisce TEXT NOT NULL,
-    cas_prihoda DATE NOT NULL,
-    cas_odhoda DATE NOT NULL,
+    datum_odhoda DATE NOT NULL,
+    datum_prihoda DATE NOT NULL,
+    ura_odhoda TIME NOT NULL,
+    ura_prihoda TIME NOT NULL,
     letalo_id INTEGER NOT NULL REFERENCES letalo(id),
     ekipa INTEGER NOT NULL
 );
@@ -43,12 +45,13 @@ CREATE TABLE delavec_na_letu (
 
 
 CREATE TABLE karta (
-    stevilka_narocila INTEGER PRIMARY KEY,
+    stevilka_narocila SERIAL PRIMARY KEY,
     razred TEXT NOT NULL,
     ime_potnika TEXT NOT NULL,
     cena INTEGER NOT NULL,
     stevilka_sedeza TEXT NOT NULL,
     stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
+    -- datum_nakupa DATE NOT NULL,
 );
 
 CREATE TABLE uporabnik (

@@ -143,7 +143,7 @@ def registracija_post():
     uporabnik = None
     try:
         uporabnik = cur.execute(
-            "SELECT * FROM uporabnik WHERE emso = %s", (emso, ))
+            "SELECT * FROM uporabnik WHERE emso = %s;", (emso, ))
     except:
         uporabnik = None
     if uporabnik is not None:
@@ -236,10 +236,10 @@ def profil_uporabnika():
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
-        "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s", (username, ))
+        "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
     uporabnik = cur.fetchall()
     cur.execute(
-        "SELECT * FROM karta WHERE ime_potnika = %s", (username, ))
+        "SELECT * FROM karta WHERE ime_potnika = %s;", (username, ))
     kupljene_karte = cur.fetchall()
     leti = []
     for karta in kupljene_karte:
@@ -280,7 +280,7 @@ def dodaj_organizatorja_post():
     uporabnik = None
     try:
         uporabnik = cur.execute(
-            "SELECT * FROM organizator_letov WHERE emso = %s", (emso, ))
+            "SELECT * FROM organizator_letov WHERE emso = %s;", (emso, ))
     except:
         uporabnik = None
     if uporabnik is not None:
@@ -290,7 +290,7 @@ def dodaj_organizatorja_post():
     try:
         cur = conn.cursor()
         cur.execute(
-            'SELECT * FROM organizator_letov WHERE uporabnisko_ime = %s', (uporabnisko_ime, ))
+            'SELECT * FROM organizator_letov WHERE uporabnisko_ime = %s;', (uporabnisko_ime, ))
         uporabnik = cur.fetchone()
     except:
         uporabnik = None
