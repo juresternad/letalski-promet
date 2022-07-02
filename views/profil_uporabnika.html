@@ -51,6 +51,14 @@
             <th>Čas odhoda</th>
             <!-- TODO <th>Telefon</th> -->
           </tr>
+          %for (id, vzletno, pristajalno, cas_odhoda) in leti:
+          <tr>
+            <td>{{id}}</td>
+            <td>{{vzletno}}</td>
+            <td>{{pristajalno}}</td>
+            <td>{{cas_odhoda}}</td>
+          </tr>
+            %end
         </table>
         
 

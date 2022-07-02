@@ -51,7 +51,7 @@ def let():
     do = request.forms.do
     datum_odhoda = request.forms.datum_odhoda
     datum_vrnitve = request.forms.datum_vrnitve
-    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND cas_prihoda = %s AND cas_odhoda = %s",
+    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND cas_prihoda = %s AND cas_odhoda = %s;",
                 (iz, do, datum_odhoda, datum_vrnitve))
     ustrezni_leti = cur.fetchall()
     if ustrezni_leti == []:
@@ -65,7 +65,7 @@ def let():
 @get('/kupi/<id_leta>')
 def nakup_karte(id_leta):
     try:
-        cur.execute("SELECT * FROM let WHERE stevilka_leta = %s", (id_leta, ))
+        cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
         let = cur.fetchall()[0][:5]
         return template('nakup_karte.html', let=let)
     except:
@@ -80,7 +80,8 @@ def kupi_karto(id_leta):
         # TODO stevilka_narocila mora biti auto generirana (to naredis v SQL)
         # TODO SELECT ime from uporabnik where uporabnisko_ime=username
         cur.execute("insert into karta (stevilka_narocila, razred, ime_potnika, cena, stevilka_sedeza, stevilka_leta) values (%s,%s,%s,%s,%s,%s);", 
-        (4, "economy", username, 100, "3", id_leta))
+        (5, "economy", username, 100, "3", id_leta))
+        conn.commit()
         return template('uspesen_nakup.html', id_leta=id_leta)
       except:
         return "Žal nakup karte ni bil uspešen!"
@@ -161,7 +162,7 @@ def registracija_post():
         redirect(url('/registracija'))
         return
     zgostitev = hashGesla(geslo)
-    cur.execute('INSERT INTO uporabnik (emso, ime, priimek, email, uporabnisko_ime, geslo) VALUES (%s,%s,%s,%s,%s,%s)',
+    cur.execute('INSERT INTO uporabnik (emso, ime, priimek, email, uporabnisko_ime, geslo) VALUES (%s,%s,%s,%s,%s,%s);',
                 (emso, ime, priimek, email, uporabnisko_ime, zgostitev))
     conn.commit()
     response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
@@ -189,7 +190,7 @@ def prijava_post():
         redirect(url('/dodaj_organizatorja'))
     try:
         cur.execute(
-            "SELECT geslo FROM organizator_letov WHERE uporabnisko_ime=%s", (uporabnisko_ime, ))
+            "SELECT geslo FROM organizator_letov WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
         organizator_geslo = cur.fetchone()
         organizator_geslo = organizator_geslo[0]
     except:
@@ -197,7 +198,7 @@ def prijava_post():
 
     try:
         cur.execute(
-            "SELECT geslo FROM uporabnik WHERE uporabnisko_ime=%s", (uporabnisko_ime, ))
+            "SELECT geslo FROM uporabnik WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
         potnik_geslo = cur.fetchone()
         potnik_geslo = potnik_geslo[0]
     except:
@@ -237,16 +238,23 @@ def profil_uporabnika():
     cur.execute(
         "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s", (username, ))
     uporabnik = cur.fetchall()
-    print("####################", uporabnik)
-    # TODO naj izpise se kupljene lete
-    return template('profil_uporabnika.html', uporabnik=uporabnik, napaka=napaka)
+    cur.execute(
+        "SELECT * FROM karta WHERE ime_potnika = %s", (username, ))
+    kupljene_karte = cur.fetchall()
+    leti = []
+    for karta in kupljene_karte:
+        stevilka_leta = karta[0]
+        cur.execute(
+        "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, cas_odhoda FROM let WHERE stevilka_leta = %s;", (stevilka_leta, ))
+        leti.append(cur.fetchall()[0]) # pri karti je treba dodati cas nakupa karte in pri letu pa se uro
+    return template('profil_uporabnika.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
 
 @get('/profil_organizatorja')
 def profil_organizatorja():
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
-        "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s", (username, ))
+        "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s;", (username, ))
     organizator_letov = cur.fetchall()
     print()
     return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka)
@@ -291,7 +299,7 @@ def dodaj_organizatorja_post():
         redirect(url('/dodaj_organizatorja'))
         return
     zgostitev = hashGesla(geslo)
-    cur.execute("INSERT INTO organizator_letov (emso, ime, priimek, uporabnisko_ime, geslo) VALUES (%s, %s, %s, %s, %s)", (emso, ime, priimek, uporabnisko_ime, zgostitev))
+    cur.execute("INSERT INTO organizator_letov (emso, ime, priimek, uporabnisko_ime, geslo) VALUES (%s, %s, %s, %s, %s);", (emso, ime, priimek, uporabnisko_ime, zgostitev))
     conn.commit()
     response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
     redirect(url('/prijava'))
