@@ -101,18 +101,45 @@ def kupi_karto(id_leta):
 ############################################
 ### Registracija, prijava
 ############################################
-def nastaviSporocilo(sporocilo=None): # TODO pri prijavi ne izpisuje sporocila
-    # global napakaSporocilo
-    staro = request.get_cookie("sporocilo", secret=skrivnost)
-    if sporocilo is None:
-        response.delete_cookie('sporocilo')
-    else:
-        response.set_cookie('sporocilo', sporocilo, path="/", secret=skrivnost)
-    return staro
 
 
 skrivnost = "banana"
 
+def nastaviSporocilo(sporocilo = None):
+    staro = request.get_cookie("sporocilo", secret=skrivnost)
+    if sporocilo is None:
+        response.delete_cookie('sporocilo', path="/")
+    else:
+        response.set_cookie('sporocilo', sporocilo, secret=skrivnost, path="/")
+    return staro 
+    
+def aliUporabnik(): 
+    username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    if username:
+        cur = conn.cursor()
+        uporabnik = None
+        try: 
+            cur.execute('SELECT * FROM uporabnik WHERE uporabnisko_ime = %s', (username, ))
+            uporabnik = cur.fetchone()
+        except:
+            uporabnik = None
+        if uporabnik: 
+            return uporabnik
+    redirect(url('/prijava'))
+
+def aliOrganizator(): 
+    username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    if username:
+        cur = conn.cursor()
+        organizator = None
+        try: 
+            cur.execute('SELECT * FROM organizator_letov WHERE uporabnisko_ime = %s', (username, ))
+            organizator = cur.fetchone()
+        except:
+            organizator = None
+        if organizator: 
+            return organizator
+    redirect(url('/prijava'))
 
 def hashGesla(s):
     m = hashlib.sha256()
@@ -187,10 +214,6 @@ def prijava_get():
 def prijava_post():
     uporabnisko_ime = request.forms.username
     geslo = request.forms.password
-    if uporabnisko_ime is None or geslo is None:
-        nastaviSporocilo('Uporabniško ime in geslo morata biti neprazna')
-        redirect('/prijava')
-        return
     cur = conn.cursor()
     potnik_geslo = None
     organizator_geslo = None
@@ -211,8 +234,6 @@ def prijava_post():
         potnik_geslo = potnik_geslo[0]
     except:
         potnik_geslo = None
-
-    curr = conn.cursor() # TODO delete this because it is not used
     if potnik_geslo is None and organizator_geslo is None:
         nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni')
         redirect(url('/prijava'))
@@ -324,3 +345,4 @@ run(host='localhost', port=SERVER_PORT, reloader=True)
 
 
 ###################################################
+

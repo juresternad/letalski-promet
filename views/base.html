@@ -25,6 +25,13 @@
     </nav>
 
     <div class="container">
+
+        % if napaka:
+        <div class="alert alert-danger">
+            {{napaka}}
+        </div>
+        % end
+        
         {{!base}}
     </div>
 
