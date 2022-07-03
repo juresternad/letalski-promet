@@ -26,6 +26,8 @@ debug(True)
 
 @get('/')  # landing page
 def index():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
     nleti = []
     try:
         cur.execute(
@@ -46,7 +48,7 @@ def index():
             nleti.append([stevilka_leta, vzletno, pristajalno, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena])
     except:
         return "Napaka!"
-    return template('index.html', leti=nleti) # TODO ce si prijavljen naj desno zgoraj pise username in ne prijava in registracija
+    return template('index.html', leti=nleti, uporabnik=uporabnik, organizator=organizator) # TODO ce si prijavljen naj desno zgoraj pise username in ne prijava in registracija
 
 
 @post('/leti/')  # poizvedba za let
@@ -125,7 +127,7 @@ def aliUporabnik():
             uporabnik = None
         if uporabnik: 
             return uporabnik
-    redirect(url('/prijava'))
+    
 
 def aliOrganizator(): 
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
@@ -139,7 +141,7 @@ def aliOrganizator():
             organizator = None
         if organizator: 
             return organizator
-    redirect(url('/prijava'))
+     
 
 def hashGesla(s):
     m = hashlib.sha256()

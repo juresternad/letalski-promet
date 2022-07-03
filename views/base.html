@@ -15,12 +15,25 @@
 <body>
     <!-- TODO daj navbar v poseben html file da ne kopiras skos -->
     <nav class="navbar navbar-dark bg-primary">
-        <div class=>
+        <div class="container-fluid">
+            
             <a class="navbar-brand" href="/">Kupi letalsko karto</a>
         </div>
+        %if uporabnik == None and organizator ==None:
         <div class="navbar-nav ml-auto">
             <a class="text-white" href="/prijava">Prijava</a>
             <a class="text-white" href="/registracija">Registracija</a> 
+        </div>
+        %elif uporabnik != None and organizator ==None:
+        Ti si {{uporabnik}}
+        <div class="navbar-nav ml-auto">
+        <a class="text-white" href="/odjava">Odjava</a>
+        </div>
+        %elif uporabnik == None and organizator !=None:
+        Ti si {{organizator}}
+        <div class="navbar-nav ml-auto">
+        <a class="text-white" href="/odjava">Odjava</a>
+        %end
         </div>
     </nav>
 
@@ -31,7 +44,7 @@
             {{napaka}}
         </div>
         % end
-        
+
         {{!base}}
     </div>
 
