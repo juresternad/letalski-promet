@@ -18,7 +18,7 @@ ROOT = os.environ.get('BOTTLE_ROOT', '/')
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 
 
-# odkomentiraj, če želiš sporočila o napakah TODO
+# odkomentiraj, če želiš sporočila o napakah
 debug(True)
 
 ####################################################
@@ -26,23 +26,26 @@ debug(True)
 
 @get('/')  # landing page
 def index():
-    # TODO pogruntaj napako in mogoce dodaj try catch
-    # TODO popravi ker je let drugacen
-    cur.execute(
-        # TODO dodaj omejitev na top 20
-        "SELECT (vzletno_letalisce, pristajalno_letalisce, cas_odhoda, cas_prihoda, stevilka_leta) FROM let;")
-    leti = cur.fetchall()
-    # grdo sej vem :()
-    # print(leti[0][0].split(','))
     nleti = []
-    for let in leti:
-        let = let[0].split(',')
-        vzletno = let[0][2:-1]
-        pristajalno = let[1][1:-1]
-        cas_odhoda = let[2]
-        cas_prihoda = let[3][:-1]
-        stevilka_leta = int(let[4][:-1]) # TODO mogoce se da lepse
-        nleti.append([vzletno, pristajalno, cas_odhoda, cas_prihoda, stevilka_leta])
+    try:
+        cur.execute(
+            # TODO pogoj za uro mora biti opuscen ce ni danasnji datum
+            "SELECT (stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena) FROM let WHERE CURRENT_DATE <= datum_odhoda AND CURRENT_TIME <= ura_odhoda ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
+        leti = cur.fetchall()
+        for let in leti:
+            let = let[0].split(',')
+            print(let)
+            stevilka_leta = int(let[0][1:])
+            vzletno = let[1][1:-1]
+            pristajalno = let[2][1:-1]
+            datum_odhoda = let[3]
+            datum_prihoda = let[4]
+            ura_odhoda = let[5]
+            ura_prihoda = let[6]
+            cena = float(let[7][:-1])
+            nleti.append([stevilka_leta, vzletno, pristajalno, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena])
+    except:
+        return "Napaka!"
     return template('index.html', leti=nleti) # TODO ce si prijavljen naj desno zgoraj pise username in ne prijava in registracija
 
 
@@ -52,7 +55,7 @@ def let():
     do = request.forms.do
     datum_odhoda = request.forms.datum_odhoda
     datum_vrnitve = request.forms.datum_vrnitve
-    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND cas_prihoda = %s AND cas_odhoda = %s;",
+    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND datum_prihoda = %s AND datum_odhoda = %s;",
                 (iz, do, datum_odhoda, datum_vrnitve))
     ustrezni_leti = cur.fetchall()
     if ustrezni_leti == []:
@@ -62,28 +65,34 @@ def let():
 
 
 
-# TODO stevilo kart
+# TODO povratna? to lahko das na zacetno stran in ce ni leta nazaj pac ni povratne
 @get('/kupi/<id_leta>')
 def nakup_karte(id_leta):
     try:
         cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
-        let = cur.fetchall()[0][:5]
+        let = cur.fetchall()[0]
+        print(let)
         return template('nakup_karte.html', let=let)
     except:
         return "Izbrani let ni na voljo!"
 
-@post('/kupi/<id_leta>')
+@post('/kupi/<id_leta>') 
 def kupi_karto(id_leta):
-    # return f"kupili ste {id_leta}"
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    razred = request.forms.razred
+    st_kart = request.forms.st_kart
     if username is not None:
-      try: # TODO ime_potnika je username (spremeni v sql), stevilka sedeza mora biti unique integer (auto generiran in omejen),
-        cur.execute("insert into karta (razred, ime_potnika, stevilka_sedeza, stevilka_leta) values (%s,%s,%s,%s,%s);", 
-        ("economy", username, "3", id_leta))
-        conn.commit()
-        return template('uspesen_nakup.html', id_leta=id_leta)
-      except:
-        return "Žal nakup karte ni bil uspešen!"
+        # ali sploh lahko en uporabnik kupi več kart
+    #   try:  # TODO problem je stevilka_sedeza ker ne ves kdaj je letalo polno
+        for _ in range(st_kart):
+            cur.execute("insert into karta (razred, uporabnisko_ime, stevilka_leta) values (%s,%s,%s);", 
+            (razred, username, id_leta))
+            conn.commit()
+        cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda WHERE stevilka_leta = id_leta")
+        kupljena_karta = cur.fetchone()[0] # TODO netestirana koda
+        return template('uspesen_nakup.html', kupljena_karta=kupljena_karta, st_kart=st_kart)
+    #   except:
+    #     return "Žal nakup karte ni bil uspešen!"
     else:
         redirect(url('/prijava'))
 
@@ -218,7 +227,7 @@ def prijava_post():
         redirect(url('/profil_organizatorja'))
 
     if organizator_geslo is None:
-        redirect(url('/profil_uporabnika'))
+        redirect(url('/profil_uporabnika')) # redirect to page you came from
 
 
 @get('/odjava')

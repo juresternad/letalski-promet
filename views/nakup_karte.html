@@ -8,14 +8,26 @@
         <p>{{let}}</p>
         <b>Kraj odhoda: </b>{{let[1]}} <br>
         <b>Kraj prihoda: </b>{{let[2]}} <br>
-        <b>Datum odhoda: </b>{{let[3]}} <br>
-        <b>Cena: </b> 100 eur
-        <p>stevilka_narocila INTEGER PRIMARY KEY,<br>
-            razred TEXT NOT NULL,<br>
-            ime_potnika TEXT NOT NULL,<br>
-            cena INTEGER NOT NULL,<br>
-            stevilka_sedeza TEXT NOT NULL<br>
-            stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)</p>
+        <b>Odhod: </b>{{let[3]}} {{let[5]}} <br>
+        <b>Cena karte: </b> {{let[-1]}} eur
+        
+        <br><br>
+        <b>Razred:</b>
+        <form>
+            <input type="radio" id="economy" name="razred" value="economy" checked="checked">
+            <label for="economy">Economy</label><br>
+            <input type="radio" id="business" name="razred" value="business">
+            <label for="business">Business</label><br>
+            <input type="radio" id="first" name="razred" value="first">
+            <label for="first">First class</label>
+        </form>
+        <br>
+        <form>
+            <label for="st_kart"><b>Število kart:</b></label>
+            <input type="number" name="st_kart" value="1">
+        </form>
+        <br><br>
+
         <form action="/kupi/{{let[0]}}" method="post">
             <button type="submit">Kupi in plačaj</button>
         </form>

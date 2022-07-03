@@ -34,7 +34,6 @@ CREATE TABLE let (
     cena DECIMAL NOT NULL
 );
 
-
 CREATE TABLE delavec_na_letu (
     id INTEGER PRIMARY KEY,
     ime TEXT NOT NULL,
@@ -43,16 +42,15 @@ CREATE TABLE delavec_na_letu (
     ekipa INTEGER NOT NULL
 );
 
-
-
 CREATE TABLE karta (
     stevilka_narocila SERIAL PRIMARY KEY,
     razred TEXT NOT NULL,
+    -- uporabnik TEXT NOT NULL REFERENCES uporabnik(uporabnisko_ime),
     ime_potnika TEXT NOT NULL,
-    -- cena INTEGER NOT NULL,
+    -- stevilka_sedeza SERIAL,
     stevilka_sedeza TEXT NOT NULL, -- SERIAL
     stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
-    -- datum_nakupa DATE NOT NULL,
+    -- cas_nakupa TIMESTAMP NOT NULL,
 );
 
 CREATE TABLE uporabnik (
@@ -72,7 +70,6 @@ CREATE TABLE organizator_letov (
     uporabnisko_ime TEXT UNIQUE NOT NULL,
     geslo TEXT NOT NULL 
 );
-
 
 -- dodelimo pravice 
 GRANT ALL ON DATABASE sem2022_gasperk TO gasperk;
