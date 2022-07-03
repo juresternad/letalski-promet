@@ -1,5 +1,7 @@
-% rebase('base.html')
-
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
 <div class="container">
     <form action="/registracija" method="post" autocomplete="off">
 
