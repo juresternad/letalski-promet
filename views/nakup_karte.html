@@ -5,30 +5,33 @@
 <div class="container">
     <br><br><br><br>
     <div>
-        <p>{{let}}</p>
+        <h3>Nakup karte</h3>
         <b>Kraj odhoda: </b>{{let[1]}} <br>
         <b>Kraj prihoda: </b>{{let[2]}} <br>
         <b>Odhod: </b>{{let[3]}} {{let[5]}} <br>
         <b>Cena karte: </b> {{let[-1]}} eur
-        
+
         <br><br>
         <b>Razred:</b>
-        <form>
-            <input type="radio" id="economy" name="razred" value="economy" checked="checked">
-            <label for="economy">Economy</label><br>
-            <input type="radio" id="business" name="razred" value="business">
-            <label for="business">Business</label><br>
-            <input type="radio" id="first" name="razred" value="first">
-            <label for="first">First class</label>
-        </form>
-        <br>
-        <form>
-            <label for="st_kart"><b>Število kart:</b></label>
-            <input type="number" name="st_kart" value="1">
-        </form>
-        <br><br>
 
         <form action="/kupi/{{let[0]}}" method="post">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="razred" id="economy" value="economy">
+                <label class="form-check-label" for="economy">Economy</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="razred" id="business" value="business">
+                <label class="form-check-label" for="business">Business</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="razred" id="first" value="first">
+                <label class="form-check-label" for="first">First class</label>
+            </div>
+
+            <br>
+            <label for="st_kart"><b>Število kart:</b></label>
+            <input type="number" name="st_kart" value="1">
+            <br><br>
             <button type="submit">Kupi in plačaj</button>
         </form>
     </div>

@@ -24,11 +24,12 @@
         <input type="date" name="datum_vrnitve" id="datum_vrnitev">
         <button class="btn btn-primary" type="submit">Išči!</button>
     </form>
+
     <br><br><br><br>
     <h3>Last-minute leti</h3>
     <ul style="font-size: 120%">
         % if leti == []:
-            <p>Trenutno ni letov.</p>
+        <p>Trenutno ni letov.</p>
         % end
         % for let in leti:
         <li><b>Kraj odhoda: </b>{{let[1]}} <br>

@@ -42,17 +42,6 @@ CREATE TABLE delavec_na_letu (
     ekipa INTEGER NOT NULL
 );
 
-CREATE TABLE karta (
-    stevilka_narocila SERIAL PRIMARY KEY,
-    razred TEXT NOT NULL,
-    -- uporabnik TEXT NOT NULL REFERENCES uporabnik(uporabnisko_ime),
-    ime_potnika TEXT NOT NULL,
-    -- stevilka_sedeza SERIAL,
-    stevilka_sedeza TEXT NOT NULL, -- SERIAL
-    stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
-    -- cas_nakupa TIMESTAMP NOT NULL,
-);
-
 CREATE TABLE uporabnik (
     emso INTEGER PRIMARY KEY,
     ime TEXT NOT NULL,
@@ -61,6 +50,17 @@ CREATE TABLE uporabnik (
     uporabnisko_ime TEXT UNIQUE NOT NULL,
     geslo TEXT NOT NULL
 );
+
+CREATE TABLE karta (
+    stevilka_narocila SERIAL PRIMARY KEY,
+    razred TEXT NOT NULL,
+    uporabnisko_ime TEXT NOT NULL,
+    stevilka_sedeza SERIAL,
+    stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
+    -- cas_nakupa TIMESTAMP NOT NULL,
+);
+
+
 
 -- TODO: organizator letov je uporabnik s posebnim dovoljenjem
 CREATE TABLE organizator_letov (

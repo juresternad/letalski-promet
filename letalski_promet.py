@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extensions
 import psycopg2.extras
+from regex import P
 from bottleext import *
 import os
 import hashlib
@@ -30,11 +31,10 @@ def index():
     try:
         cur.execute(
             # TODO pogoj za uro mora biti opuscen ce ni danasnji datum
-            "SELECT (stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena) FROM let WHERE CURRENT_DATE <= datum_odhoda AND CURRENT_TIME <= ura_odhoda ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
+            "SELECT (stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena) FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE < datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
         leti = cur.fetchall()
         for let in leti:
             let = let[0].split(',')
-            print(let)
             stevilka_leta = int(let[0][1:])
             vzletno = let[1][1:-1]
             pristajalno = let[2][1:-1]
@@ -71,7 +71,6 @@ def nakup_karte(id_leta):
     try:
         cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
         let = cur.fetchall()[0]
-        print(let)
         return template('nakup_karte.html', let=let)
     except:
         return "Izbrani let ni na voljo!"
@@ -79,20 +78,27 @@ def nakup_karte(id_leta):
 @post('/kupi/<id_leta>') 
 def kupi_karto(id_leta):
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
-    razred = request.forms.razred
-    st_kart = request.forms.st_kart
+    razred = 'economy' # request.forms.razred
+    st_kart = int(request.forms.st_kart)
+    print(razred, "--------------")
+    print('stevilo kart', st_kart)
+    print('razred', razred)
     if username is not None:
         # ali sploh lahko en uporabnik kupi več kart
-    #   try:  # TODO problem je stevilka_sedeza ker ne ves kdaj je letalo polno
+      try:  # TODO problem je stevilka_sedeza ker ne ves kdaj je letalo polno
         for _ in range(st_kart):
             cur.execute("insert into karta (razred, uporabnisko_ime, stevilka_leta) values (%s,%s,%s);", 
             (razred, username, id_leta))
             conn.commit()
-        cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda WHERE stevilka_leta = id_leta")
-        kupljena_karta = cur.fetchone()[0] # TODO netestirana koda
-        return template('uspesen_nakup.html', kupljena_karta=kupljena_karta, st_kart=st_kart)
-    #   except:
-    #     return "Žal nakup karte ni bil uspešen!"
+        cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda) FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+        kup_karta = cur.fetchone()[0].split(',')
+        iz = kup_karta[0][2:-1]
+        do = kup_karta[1][1:-1]
+        datum = kup_karta[2]
+        ura = kup_karta[3][:-1]
+        return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
+      except:
+        return "Žal nakup karte ni bil uspešen!"
     else:
         redirect(url('/prijava'))
 
@@ -243,19 +249,24 @@ def odjava_get():
 def profil_uporabnika():
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
-    cur.execute(
-        "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
-    uporabnik = cur.fetchall()
-    cur.execute(
-        "SELECT * FROM karta WHERE ime_potnika = %s;", (username, ))
-    kupljene_karte = cur.fetchall()
-    leti = []
-    for karta in kupljene_karte:
-        stevilka_leta = karta[0]
+    if username is not None:
         cur.execute(
-        "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, cas_odhoda FROM let WHERE stevilka_leta = %s;", (stevilka_leta, ))
-        leti.append(cur.fetchall()[0]) # pri karti je treba dodati cas nakupa karte in pri letu pa se uro
-    return template('profil_uporabnika.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
+            "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
+        uporabnik = cur.fetchall()
+        cur.execute(
+            "SELECT * FROM karta WHERE uporabnisko_ime = %s LIMIT 10;", (username, ))
+        kupljene_karte = cur.fetchall()
+        print(kupljene_karte) # TODO preveri ce dela pravilno
+        leti = []
+        for karta in kupljene_karte:
+            stevilka_leta = karta[0]
+            cur.execute(
+            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s;", (stevilka_leta, ))
+            leti.append(cur.fetchall()[0])
+            print(leti)
+        return template('profil_uporabnika.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
+    else:
+        redirect(url('/prijava'))
 
 @get('/profil_organizatorja')
 def profil_organizatorja():
