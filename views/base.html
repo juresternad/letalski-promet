@@ -27,12 +27,16 @@
         %elif uporabnik != None and organizator ==None:
         Ti si {{uporabnik}}
         <div class="navbar-nav ml-auto">
+        <a class="text-white" href="/profil_uporabnika">Moj profil</a>
         <a class="text-white" href="/odjava">Odjava</a>
         </div>
         %elif uporabnik == None and organizator !=None:
         Ti si {{organizator}}
         <div class="navbar-nav ml-auto">
+        <a class="text-white" href="/profil_organizatorja">Moj profil</a>
+        <a class="text-white" href="/dodaj_let">Dodaj let</a>
         <a class="text-white" href="/odjava">Odjava</a>
+
         %end
         </div>
     </nav>

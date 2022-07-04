@@ -1,0 +1,80 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, organizator = organizator)
+
+<div class="container">
+    <form action="/dodaj_let" method="post" autocomplete="off">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="vzletno_letalisce">vzletno_letalisce</label>
+                <input id="vzletno_letalisce" name="vzletno_letalisce" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="pristajalno_letalisce">pristajalno_letalisce</label>
+                <input id="pristajalno_letalisce" name="pristajalno_letalisce" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="datum_odhoda">datum odhoda</label>
+                <input type="date" id="datum_odhoda" name="datum_odhoda" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="datum_prihoda">datum prihoda</label>
+                <input type="date" id="datum_prihoda" name="datum_prihoda" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ura_odhoda">ura_odhoda</label>
+                <input type="time" id="ura_odhoda" name="ura_odhoda" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ura_prihoda">ura_prihoda</label>
+                <input type="time" id="ura_prihoda" name="ura_prihoda" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="letalo_id">letalo_id</label>
+                <input id="letalo_id" name="letalo_id" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ekipa">ekipa</label>
+                <input id="ekipa" name="ekipa" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="cena">cena</label>
+                <input id="cena" name="cena" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row col">
+            <button class="btn btn-primary" type="submit">
+                Dodaj let
+            </button>
+        </div>
+    </form>
+</div>

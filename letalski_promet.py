@@ -345,6 +345,34 @@ def dodaj_organizatorja_post():
     conn.commit()
     response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
     redirect(url('/prijava'))
+
+
+############################################
+### Dodajanje leta
+############################################
+
+@get('/dodaj_let')
+def dodaj_let_get():
+    organizator = aliOrganizator()
+    uporabnik = aliUporabnik()
+    napaka = nastaviSporocilo()
+    return template('dodaj_let.html', napaka=napaka, organizator=organizator, uporabnik = uporabnik)
+
+@post('/dodaj_let')
+def dodaj_let_post():
+    vzletno_letalisce = request.forms.vzletno_letalisce
+    pristajalno_letalisce = request.forms.pristajalno_letalisce
+    datum_odhoda = request.forms.datum_odhoda
+    datum_prihoda = request.forms.datum_prihoda
+    ura_odhoda = request.forms.ura_odhoda
+    ura_prihoda = request.forms.ura_prihoda
+    letalo_id = request.forms.letalo_id
+    ekipa = request.forms.ekipa
+    cena = request.forms.cena
+    cur = conn.cursor()
+    cur.execute("INSERT INTO let (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena))
+    conn.commit()
+    redirect(url('/dodaj_let'))
 ####################################################
 
 

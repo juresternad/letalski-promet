@@ -2,20 +2,26 @@
 % setdefault('uporabnik', '')
 % setdefault('organizator', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+<div class="container">
+  <br><br><br><br>
+  <h1 style="color:red">TODO dodaj ali povezavo do začetne strani ali pa kar tisto kar je na začetni strani</h1>
+  <h1>Podatki organizatorja</h1>
+  <table id="izpis" class="table table-hover">
+    <tr>
+      <th>Emšo</th>
+      <th>Ime</th>
+      <th>Priimek</th>
+      <th>Uporabniško ime</th>
+    </tr>
+    %for (emso, ime, priimek, uporabnisko_ime) in organizator_letov:
+    <tr>
+      <td>{{emso}}</td>
+      <td>{{ime}}</td>
+      <td>{{priimek}}</td>
+      <td>{{uporabnisko_ime}}</td>
+    </tr>
+    %end
+  </table>
 
-<table id="izpis2" class="table table-hover">
-  <tr>
-    <th>Emšo</th>
-    <th>Ime</th>
-    <th>Priimek</th>
-    <th>Uporabniško ime</th>
-  </tr>
-  %for (emso, ime, priimek, uporabnisko_ime) in organizator_letov:
-  <tr>
-    <td>{{emso}}</td>
-    <td>{{ime}}</td>
-    <td>{{priimek}}</td>
-    <td>{{uporabnisko_ime}}</td>
-  </tr>
-  %end
-</table>
+
+</div>
