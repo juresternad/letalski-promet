@@ -29,26 +29,14 @@ debug(True)
 def index():
     uporabnik = aliUporabnik()
     organizator = aliOrganizator()
-    nleti = []
+    leti = []
     try:
         cur.execute(
-            # TODO pogoj za uro mora biti opuscen ce ni danasnji datum
-            "SELECT (stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena) FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE < datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
         leti = cur.fetchall()
-        for let in leti:
-            let = let[0].split(',')
-            stevilka_leta = int(let[0][1:])
-            vzletno = let[1][1:-1]
-            pristajalno = let[2][1:-1]
-            datum_odhoda = let[3]
-            datum_prihoda = let[4]
-            ura_odhoda = let[5]
-            ura_prihoda = let[6]
-            cena = float(let[7][:-1])
-            nleti.append([stevilka_leta, vzletno, pristajalno, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena])
     except:
         return "Napaka!"
-    return template('index.html', leti=nleti, uporabnik=uporabnik, organizator=organizator) # TODO ce si prijavljen naj desno zgoraj pise username in ne prijava in registracija
+    return template('index.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
 
 
 @post('/leti/')  # poizvedba za let
@@ -80,24 +68,18 @@ def nakup_karte(id_leta):
 @post('/kupi/<id_leta>') 
 def kupi_karto(id_leta):
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
-    razred = 'economy' # request.forms.razred
+    razred = request.forms.razred
     st_kart = int(request.forms.st_kart)
-    print(razred, "--------------")
-    print('stevilo kart', st_kart)
-    print('razred', razred)
     if username is not None:
-        # ali sploh lahko en uporabnik kupi več kart
+      # ali sploh lahko en uporabnik kupi več kart
       try:  # TODO problem je stevilka_sedeza ker ne ves kdaj je letalo polno
         for _ in range(st_kart):
             cur.execute("insert into karta (razred, uporabnisko_ime, stevilka_leta) values (%s,%s,%s);", 
             (razred, username, id_leta))
             conn.commit()
-        cur.execute("SELECT (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda) FROM let WHERE stevilka_leta = %s;", (id_leta, ))
-        kup_karta = cur.fetchone()[0].split(',')
-        iz = kup_karta[0][2:-1]
-        do = kup_karta[1][1:-1]
-        datum = kup_karta[2]
-        ura = kup_karta[3][:-1]
+        cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+        kup_karta = cur.fetchone()
+        iz, do, datum, ura = kup_karta[1], kup_karta[2], kup_karta[3], kup_karta[5]
         return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
       except:
         return "Žal nakup karte ni bil uspešen!"
@@ -275,18 +257,17 @@ def profil_uporabnika():
     if username is not None:
         cur.execute(
             "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
-        uporabnik = cur.fetchall()
+        uporabnik = cur.fetchone()
         cur.execute(
             "SELECT * FROM karta WHERE uporabnisko_ime = %s LIMIT 10;", (username, ))
         kupljene_karte = cur.fetchall()
-        print(kupljene_karte) # TODO preveri ce dela pravilno
         leti = []
+        # TODO mogoce je bolje ce naredi join in je tako samo ena poizvedba
         for karta in kupljene_karte:
-            stevilka_leta = karta[0]
+            stevilka_leta = karta[4]
             cur.execute(
-            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s;", (stevilka_leta, ))
-            leti.append(cur.fetchall()[0])
-            print(leti)
+            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s LIMIT 1;", (stevilka_leta, )) # order by datum_nakupa
+            leti.append(tuple(cur.fetchone()))
         return template('profil_uporabnika.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
     else:
         redirect(url('/prijava'))
@@ -298,7 +279,6 @@ def profil_organizatorja():
     cur.execute(
         "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s;", (username, ))
     organizator_letov = cur.fetchall()
-    print()
     return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka)
 
 ############################################

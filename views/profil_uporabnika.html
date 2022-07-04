@@ -14,14 +14,12 @@
       <th>Uporabniško ime</th>
       <!-- TODO <th>Telefon</th> -->
     </tr>
-    %for (emso, ime, priimek, uporabnisko_ime) in uporabnik:
     <tr>
-      <td>{{emso}}</td>
-      <td>{{ime}}</td>
-      <td>{{priimek}}</td>
-      <td>{{uporabnisko_ime}}</td>
+      <td>{{uporabnik[0]}}</td>
+      <td>{{uporabnik[1]}}</td>
+      <td>{{uporabnik[2]}}</td>
+      <td>{{uporabnik[3]}}</td>
     </tr>
-    %end
   </table>
   <h1>Kupljene karte</h1>
   <table id="kupljene_karte" class="table table-hover">
