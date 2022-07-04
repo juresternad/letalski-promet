@@ -24,6 +24,7 @@ debug(True)
 
 ####################################################
 
+# TODO popravi selecte tako da izberes le ustrezne stolpce in ne v oklepajih
 
 @get('/')  # landing page
 def index():
@@ -267,7 +268,7 @@ def profil_uporabnika():
             stevilka_leta = karta[4]
             cur.execute(
             "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s LIMIT 1;", (stevilka_leta, )) # order by datum_nakupa
-            leti.append(tuple(cur.fetchone()))
+            leti.append(cur.fetchone())
         return template('profil_uporabnika.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
     else:
         redirect(url('/prijava'))
@@ -354,6 +355,34 @@ def dodaj_let_post():
     conn.commit()
     redirect(url('/dodaj_let'))
 ####################################################
+
+############################################
+### Optimalna pot - Dijkstra
+############################################
+from dijkstra import slovar_letalisc, dijkstraish
+from datetime import datetime
+
+@get('/d')
+def d():
+    # pridobivanje podatkov
+    datum_odhoda = '2022-07-05'
+    datum_prihoda = '2022-08-24'
+    cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda >= %s AND datum_odhoda <= %s;', (datum_odhoda, datum_prihoda))
+    leti = cur.fetchall()
+    G = [[]] * len(slovar_letalisc) # seznam sosednosti
+    for let in leti:
+        # stevilka_leta = let[0]
+        vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena = let
+        # TODO PAZI KAKO DAJES LETALISCA NOTER!! '' -> no good
+        if vzletno_letalisce not in slovar_letalisc:
+            continue
+        d1 = datetime.combine(datum_odhoda, ura_odhoda)
+        t1 = datetime.timestamp(d1)
+        d2 = datetime.combine(datum_prihoda, ura_prihoda)
+        t2 = datetime.timestamp(d2)
+        G[slovar_letalisc[vzletno_letalisce]].append((cena, t1, t2, slovar_letalisc[pristajalno_letalisce]))
+    # print(G[0])
+    print(dijkstraish(G, 0, 4))
 
 
 # povezemo se z bazo

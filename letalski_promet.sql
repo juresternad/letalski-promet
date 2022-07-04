@@ -60,6 +60,7 @@ CREATE TABLE karta (
     -- cas_nakupa TIMESTAMP NOT NULL,
 );
 
+-- TODO dodaj letalisca (tako naredis le poivedbo v dijkstri in sproti zgenerirs slovar)
 
 
 -- TODO: organizator letov je uporabnik s posebnim dovoljenjem
