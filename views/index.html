@@ -30,24 +30,19 @@
         <button class="btn btn-primary" type="submit">Išči!</button>
     </form>
 
-    <br><br><br><br>
-    <h3>Last-minute leti</h3>
-    <ul style="font-size: 120%">
-        % if leti == []:
-        <p>Trenutno ni letov.</p>
-        % end
-        % for let in leti:
-        <li><b>Kraj odhoda: </b>{{let[1]}} <br>
-            <b>Kraj prihoda: </b>{{let[2]}} <br>
-            <b>Datum odhoda: </b>{{let[3]}} {{let[5]}} <br>
-            <b>Cena:</b> {{let[9]}}
-            <form action="/kupi/{{let[0]}}" method="get">
-                <button type="submit">Kupi</button>
-            </form>
-        </li>
-        % end
-    </ul>
 
+    <a href="{{url('last_minute')}}">
+        <img src="{{url('static', filename= '/images/last_min.png')}}" width="300" height="200">
+    </a>
+    <a href="{{url('last_minute')}}">
+        <img src="{{url('static', filename= '/images/vroci.png')}}" width="300" height="200">
+    </a>
+    <a href="{{url('last_minute')}}">
+        <img src="{{url('static', filename= '/images/cart.png')}}" width="300" height="200">
+    </a>
+    <a href="{{url('last_minute')}}">
+        <img src="{{url('static', filename= '/images/zniz.png')}}" width="300" height="200">
+    </a>
 </div>
 <script>
     document.getElementById('datum_odhod').value = new Date().toISOString().substring(0, 10);

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="sl">
 
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -9,35 +10,47 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>ads</title>
+        <title>ads</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/static/stili.css" /> -->
+
 </head>
 
 <body>
-    <!-- TODO daj navbar v poseben html file da ne kopiras skos -->
-    <nav class="navbar navbar-dark bg-primary">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            
             <a class="navbar-brand" href="/">Kupi letalsko karto</a>
         </div>
-        %if uporabnik == None and organizator ==None:
-        <div class="navbar-nav ml-auto">
-            <a class="text-white" href="/prijava">Prijava</a>
-            <a class="text-white" href="/registracija">Registracija</a> 
-        </div>
-        %elif uporabnik != None and organizator ==None:
-        Ti si {{uporabnik}}
-        <div class="navbar-nav ml-auto">
-        <a class="text-white" href="/profil_uporabnika">Moj profil</a>
-        <a class="text-white" href="/odjava">Odjava</a>
-        </div>
-        %elif uporabnik == None and organizator !=None:
-        Ti si {{organizator}}
-        <div class="navbar-nav ml-auto">
-        <a class="text-white" href="/profil_organizatorja">Moj profil</a>
-        <a class="text-white" href="/dodaj_let">Dodaj let</a>
-        <a class="text-white" href="/odjava">Odjava</a>
-
-        %end
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                %if uporabnik == None and organizator ==None:
+                <li class="nav-item dropdown">
+                    <a href="/prijava">Prijava</a>
+                    <a href="/registracija">Registracija</a> 
+                </li>
+                %elif uporabnik != None and organizator ==None:
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{uporabnik[4]}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/profil_uporabnika">Moj profil</a>
+                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                        <a class="dropdown-item" href="/kupljene_karte">Kupljene karte</a>
+                    </div>
+                </li>
+                %elif uporabnik == None and organizator !=None:
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{organizator[4]}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
+                        <a class="dropdown-item" href="/dodaj_let">Dodaj let</a>
+                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                    </div>
+                </li>
+                %end
+            </div>
         </div>
     </nav>
 

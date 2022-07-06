@@ -39,6 +39,27 @@ def index():
         return "Napaka!"
     return template('index.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
 
+@get("/views/images/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
+def img(filepath):
+    return static_file(filepath, root="views/images")
+
+@route("/static/<filename:path>")
+def static(filename):
+    return static_file(filename, root=static_dir)
+    
+@get('/last_minute')  # landing page
+def last_minute():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    leti = []
+    try:
+        cur.execute(
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
+        leti = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('last_minute.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
+
 
 @post('/leti/')  # poizvedba za let
 def let():
@@ -273,6 +294,28 @@ def profil_uporabnika():
     else:
         redirect(url('/prijava'))
 
+@get('/kupljene_karte')
+def kupljene_karte():
+    napaka = nastaviSporocilo()
+    username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    if username is not None:
+        cur.execute(
+            "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
+        uporabnik = cur.fetchone()
+        cur.execute(
+            "SELECT * FROM karta WHERE uporabnisko_ime = %s LIMIT 10;", (username, ))
+        kupljene_karte = cur.fetchall()
+        leti = []
+        # TODO mogoce je bolje ce naredi join in je tako samo ena poizvedba
+        for karta in kupljene_karte:
+            stevilka_leta = karta[4]
+            cur.execute(
+            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s LIMIT 1;", (stevilka_leta, )) # order by datum_nakupa
+            leti.append(cur.fetchone())
+        return template('kupljene_karte.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
+    else:
+        redirect(url('/prijava'))
+
 @get('/profil_organizatorja')
 def profil_organizatorja():
     napaka = nastaviSporocilo()
@@ -281,6 +324,8 @@ def profil_organizatorja():
         "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s;", (username, ))
     organizator_letov = cur.fetchall()
     return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka)
+
+
 
 ############################################
 ### Dodajanje organizatorja

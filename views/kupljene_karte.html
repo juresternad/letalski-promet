@@ -1,0 +1,26 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+<div class="container">
+    <h1>Kupljene karte</h1>
+    <table id="kupljene_karte" class="table table-hover">
+      <tr>
+        <th>id</th>
+        <th>Vzletno letališče</th>
+        <th>Pristajalno letališče</th>
+        <th>Čas odhoda</th>
+        <!-- TODO <th>Telefon</th> -->
+      </tr>
+      %for (id, vzletno, pristajalno, datum_odhoda, ura_odhoda) in leti:
+      <tr>
+        <td>{{id}}</td>
+        <td>{{vzletno}}</td>
+        <td>{{pristajalno}}</td>
+        <td>{{datum_odhoda}} {{ura_odhoda}}</td>
+      </tr>
+        %end
+    </table>
+    
+  
+  </div>
