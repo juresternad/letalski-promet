@@ -1,0 +1,49 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+
+<div class="container">
+    <br>
+
+    <ul style="font-size: 120%">
+        % for let in zaporedni_leti:
+        <li><b>{{let[0]}}</b> {{let[2]}} {{let[4]}} ---> <b>{{let[1]}}</b> {{let[3]}} {{let[5]}}</li>
+        % end
+    </ul>
+    <b>Cena: {{cena_potovanja}}</b>
+    <br><br><br><br>
+
+    % for let in zaporedni_leti:
+    <b>Kraj odhoda: </b>{{let[0]}} <br>
+    <b>Kraj prihoda: </b>{{let[1]}} <br>
+    <b>Odhod: </b>{{let[2]}} {{let[4]}} <br>
+    <b>Cena karte: </b> {{let[6]}} eur
+
+    <br><br>
+    <b>Razred:</b>
+
+    <form action="/kupi/{{let[7]}}" method="post">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="razred" id="economy" value="economy" checked="checked">
+            <label class="form-check-label" for="economy">Economy</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="razred" id="business" value="business">
+            <label class="form-check-label" for="business">Business</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="razred" id="first" value="first">
+            <label class="form-check-label" for="first">First class</label>
+        </div>
+
+        <br>
+        <label for="st_kart"><b>Število kart:</b></label>
+        <input type="number" name="st_kart" value="1">
+        <br><br>
+        <button type="submit">Kupi in plačaj</button>
+    </form>
+    <br><br><br><br>
+
+
+</div>

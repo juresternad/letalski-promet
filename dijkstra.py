@@ -11,6 +11,19 @@ slovar_letalisc = {
     "Paris Charles de Gaulle Airport (CDG)": 9,
 }
 
+
+def pot(sez_predhodnikov, s, t):
+  cur_position = t
+  i = 0
+  pot = []
+  while s != cur_position:
+    cur_position, st_leta = sez_predhodnikov[cur_position]
+    pot.append(st_leta)
+    # da se ne zaciklamo
+    if i > len(sez_predhodnikov): break
+    i += 1
+  return list(reversed(pot))
+
 import heapq
 C = 100000
 
@@ -21,20 +34,18 @@ def dijkstraish(G, s, t): # upostevaj tudi cas kot sekundarni parameter
     sez_predhodnikov = [None]*(len(G))
     # cas_letenja, skupni_cas_potovanja = [0]*(len(G)), [0]*(len(G))
     seznam_cen[s] = 0
-    sez_predhodnikov[s] = s
-    pq = [(0, 0, 0, s)]
+    sez_predhodnikov[s] = (s, None)
+    pq = [(0, 0, 0, s, None)]
     while pq:
-        cur_cena, cur_t1, cur_t2, cur_node = heapq.heappop(pq)
+        cur_cena, cur_t1, cur_t2, cur_node, _ = heapq.heappop(pq)
         # check neighbours
-        for (c, t1, t2, u) in G[cur_node]:
+        for (c, t1, t2, u, stevilka_leta) in G[cur_node]:
             c += cur_cena
             if c < seznam_cen[u] and cur_t2 < t1 and c <= C:
                 seznam_cen[u] = c
-                sez_predhodnikov[u] = cur_node
+                sez_predhodnikov[u] = (cur_node, stevilka_leta)
                 # cas_letenja[u] += cur_t2 - cur_t1
                 # skupni_cas_potovanja[u] += t1 - cur_t1
-                heapq.heappush(pq, (c, t1, t2, u)) # order in tuple is not random
-    return seznam_cen, sez_predhodnikov # , cas_letenja, skupni_cas_potovanja
+                heapq.heappush(pq, (c, t1, t2, u, stevilka_leta)) # order in tuple is not random
+    return seznam_cen[t], pot(sez_predhodnikov, s, t) # , cas_letenja, skupni_cas_potovanja
 
-def pot(sez_predhodnikov, s, t):
-  pass

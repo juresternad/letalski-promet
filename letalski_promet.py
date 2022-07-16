@@ -71,7 +71,7 @@ def let():
                 (iz, do, datum_odhoda, datum_vrnitve))
     ustrezni_leti = cur.fetchall()
     if ustrezni_leti == []:
-        return '<h2>Ni ustreznih letov!</h2>'
+        return f'<h2>Ni ustreznih letov!</h2><a href="/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}">prestopi</a>'
     else:
         return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
@@ -404,30 +404,39 @@ def dodaj_let_post():
 ############################################
 ### Optimalna pot - Dijkstra
 ############################################
-from dijkstra import slovar_letalisc, dijkstraish
+from dijkstra import slovar_letalisc, dijkstraish, pot
 from datetime import datetime
 
-@get('/d')
-def d():
-    # pridobivanje podatkov
-    datum_odhoda = '2022-07-05'
-    datum_prihoda = '2022-08-24'
-    cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda >= %s AND datum_odhoda <= %s;', (datum_odhoda, datum_prihoda))
-    leti = cur.fetchall()
-    G = [[]] * len(slovar_letalisc) # seznam sosednosti
-    for let in leti:
-        # stevilka_leta = let[0]
-        vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena = let
-        # TODO PAZI KAKO DAJES LETALISCA NOTER!! '' -> no good
-        if vzletno_letalisce not in slovar_letalisc:
-            continue
-        d1 = datetime.combine(datum_odhoda, ura_odhoda)
-        t1 = datetime.timestamp(d1)
-        d2 = datetime.combine(datum_prihoda, ura_prihoda)
-        t2 = datetime.timestamp(d2)
-        G[slovar_letalisc[vzletno_letalisce]].append((cena, t1, t2, slovar_letalisc[pristajalno_letalisce]))
-    # print(G[0])
-    print(dijkstraish(G, 0, 4))
+@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>')
+def d(iz, do, datum_odhoda, datum_prihoda):
+    try: 
+        cur.execute('SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda >= %s AND datum_odhoda <= %s;', (datum_odhoda, datum_prihoda))
+        leti = cur.fetchall()
+        # print(len(leti))
+        G = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
+        for let in leti:
+            # stevilka_leta = let[0]
+            stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena = let
+            if vzletno_letalisce not in slovar_letalisc:
+                continue
+            d1 = datetime.combine(datum_odhoda, ura_odhoda)
+            t1 = datetime.timestamp(d1)
+            d2 = datetime.combine(datum_prihoda, ura_prihoda)
+            t2 = datetime.timestamp(d2)
+            G[slovar_letalisc[vzletno_letalisce]].append((cena, t1, t2, slovar_letalisc[pristajalno_letalisce], stevilka_leta))
+        # print(G)
+        # print(len(G))
+        s, t = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
+        cena_potovanja, pot = dijkstraish(G, s, t)
+        # print(cena_potovanja, pot)
+        zaporedni_leti = []
+        # TODO to je cisto prevec poizvedb ko delas s for zanko (ali se da narediti poizvedbo v enem kosu??)
+        for st_leta in pot:
+            cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta, ))
+            zaporedni_leti.append(cur.fetchone())
+        return template('dijkstra_let.html', cena_potovanja=cena_potovanja, zaporedni_leti=zaporedni_leti)
+    except:
+        return "nista"
 
 
 # povezemo se z bazo
