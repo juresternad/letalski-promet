@@ -31,7 +31,7 @@ C = 100000
 
 def dijkstraish(G, s, t): # upostevaj tudi cas kot sekundarni parameter
     seznam_cen = [float('infinity')]*(len(G))
-    sez_predhodnikov = [None]*(len(G))
+    sez_predhodnikov = [None for _ in range(len(G))]
     # cas_letenja, skupni_cas_potovanja = [0]*(len(G)), [0]*(len(G))
     seznam_cen[s] = 0
     sez_predhodnikov[s] = (s, None)

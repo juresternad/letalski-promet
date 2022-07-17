@@ -31,6 +31,7 @@ def index():
     uporabnik = aliUporabnik()
     organizator = aliOrganizator()
     leti = []
+    # TODO to se nikoli ne vidi ce so une slike
     try:
         cur.execute(
             "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
@@ -94,11 +95,15 @@ def let():
     do = request.forms.do
     datum_odhoda = request.forms.datum_odhoda
     datum_vrnitve = request.forms.datum_vrnitve
-    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND datum_prihoda = %s AND datum_odhoda = %s;",
-                (iz, do, datum_odhoda, datum_vrnitve))
+    razred = request.forms.razred
+    direkten = request.forms.direkten
+    cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND datum_prihoda = %s;",
+                (iz, do, datum_odhoda)) #  AND datum_odhoda = %s
     ustrezni_leti = cur.fetchall()
-    if ustrezni_leti == []:
-        return f'<h2>Ni ustreznih letov!</h2><a href="/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}">prestopi</a>'
+    if ustrezni_leti == [] and direkten != 'on':
+        redirect(f'/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}')
+    elif ustrezni_leti == [] and direkten == 'on':
+        return f'<h2>Ni ustreznih letov!</h2><a href="/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}">prestopi</a>'
     else:
         return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
@@ -454,23 +459,22 @@ def dodaj_let_post():
 from dijkstra import slovar_letalisc, dijkstraish, pot
 from datetime import datetime
 
-@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>')
-def d(iz, do, datum_odhoda, datum_prihoda):
+@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>/<razred>')
+def d(iz, do, datum_odhoda, datum_prihoda, razred=0):
     try: 
         cur.execute('SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda >= %s AND datum_odhoda <= %s;', (datum_odhoda, datum_prihoda))
         leti = cur.fetchall()
-        # print(len(leti))
+        # print(leti)
         G = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
         for let in leti:
-            # stevilka_leta = let[0]
-            stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena = let
+            stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cene = let
             if vzletno_letalisce not in slovar_letalisc:
                 continue
             d1 = datetime.combine(datum_odhoda, ura_odhoda)
             t1 = datetime.timestamp(d1)
             d2 = datetime.combine(datum_prihoda, ura_prihoda)
             t2 = datetime.timestamp(d2)
-            G[slovar_letalisc[vzletno_letalisce]].append((cena, t1, t2, slovar_letalisc[pristajalno_letalisce], stevilka_leta))
+            G[slovar_letalisc[vzletno_letalisce]].append((cene[int(razred)], t1, t2, slovar_letalisc[pristajalno_letalisce], stevilka_leta))
         # print(G)
         # print(len(G))
         s, t = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
@@ -549,28 +553,10 @@ def odstrani(id_leta):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # povezemo se z bazo
 conn = psycopg2.connect(database=auth_g.db, user=auth_g.user,
                         password=auth_g.password, host=auth_g.host, port=DB_PORT)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # zazenemo/povezemo se s streznikom
-run(host='localhost', port=SERVER_PORT, reloader=True)
+run(host='localhost', port=SERVER_PORT, reloader=True)  
