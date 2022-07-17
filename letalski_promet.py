@@ -117,14 +117,14 @@ def kupi_karto(id_leta):
         kup_karta = cur.fetchone()
         iz, do, datum, ura, st_zas_mest, st_pro_mest = kup_karta[1], kup_karta[2], kup_karta[3], kup_karta[5], kup_karta[10], kup_karta[11]
         if razred == "economy":
-            st_zas_mest[0] += 1
-            st_pro_mest[0] -= 1
+            st_zas_mest[0] += st_kart
+            st_pro_mest[0] -= st_kart
         elif razred == "business":
-            st_zas_mest[1] += 1
-            st_pro_mest[1] -= 1
+            st_zas_mest[1] += st_kart
+            st_pro_mest[1] -= st_kart
         else:
-            st_zas_mest[2] += 1
-            st_pro_mest[2] -= 1
+            st_zas_mest[2] += st_kart
+            st_pro_mest[2] -= st_kart
         
         print(st_zas_mest, st_pro_mest)
         cur.execute("UPDATE let SET st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (st_zas_mest, st_pro_mest, id_leta, ))
