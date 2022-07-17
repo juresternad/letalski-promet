@@ -96,4 +96,3 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO filipb;
 --  GRANT INSERT ON karta TO potniki;
 --  GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO javnost;
 
-

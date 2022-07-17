@@ -54,7 +54,7 @@ def last_minute():
     leti = []
     try:
         cur.execute(
-            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY st_zasedenih_mest[1], datum_odhoda, ura_odhoda LIMIT 10;")
+            "SELECT * FROM let WHERE  datum_odhoda < CURRENT_DATE + INTERVAL '3 day' ORDER BY datum_odhoda, ura_odhoda;")
         leti = cur.fetchall()
     except:
         return "Napaka!"
@@ -67,11 +67,25 @@ def vroci():
     leti = []
     try:
         cur.execute(
-            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY st_zasedenih_mest[1], datum_odhoda, ura_odhoda LIMIT 10;")
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY st_zasedenih_mest[1] DESC, datum_odhoda, ura_odhoda LIMIT 10;")
         leti = cur.fetchall()
     except:
         return "Napaka!"
     return template('vroci.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
+
+
+@get('/carterski')  # landing page
+def carterski():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    leti = []
+    try:
+        cur.execute(
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda;")
+        leti = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('carterski.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
 
 
 @post('/leti/')  # poizvedba za let
@@ -420,9 +434,16 @@ def dodaj_let_post():
     ura_prihoda = request.forms.ura_prihoda
     letalo_id = request.forms.letalo_id
     ekipa = request.forms.ekipa
-    cena = request.forms.cena
+    cenae = int(request.forms.cenae)
+    cenab = int(request.forms.cenab)
+    cenaf = int(request.forms.cenaf)
+    prostae = int(request.forms.prostae)
+    prostab = int(request.forms.prostab)
+    prostaf = int(request.forms.prostaf)
+    cena = [cenae,cenab,cenaf]
+    zasedena = [prostae,prostab,prostaf]
     cur = conn.cursor()
-    cur.execute("INSERT INTO let (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena))
+    cur.execute("INSERT INTO let (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, st_zasedenih_mest, st_prostih_mest) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, zasedena, [0,0,0] ))
     conn.commit()
     redirect(url('/dodaj_let'))
 ####################################################
@@ -465,6 +486,87 @@ def d(iz, do, datum_odhoda, datum_prihoda):
         return "nista"
 
 
+
+
+
+###################################################
+@get('/org')  # landing page
+def org():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    leti = []
+    try:
+        cur.execute(
+            "SELECT * FROM let")
+        leti = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('org.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
+
+
+
+@get('/uredi/<id_leta>')
+def uredi(id_leta):
+    try:
+        cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+        let = cur.fetchall()[0]
+        return template('uredi.html', let=let)
+    except:
+        return "Izbrani let ni na voljo!"
+
+@post('/uredi/<id_leta>') 
+def uredi_let(id_leta):
+    vzletno_letalisce = request.forms.vzletno_letalisce
+    pristajalno_letalisce = request.forms.pristajalno_letalisce
+    datum_odhoda = request.forms.datum_odhoda
+    datum_prihoda = request.forms.datum_prihoda
+    ura_odhoda = request.forms.ura_odhoda
+    ura_prihoda = request.forms.ura_prihoda
+    letalo_id = request.forms.letalo_id
+    ekipa = request.forms.ekipa
+    cenae = int(request.forms.cenae)
+    cenab = int(request.forms.cenab)
+    cenaf = int(request.forms.cenaf)
+    prostae = int(request.forms.prostae)
+    prostab = int(request.forms.prostab)
+    prostaf = int(request.forms.prostaf)
+    cena = [cenae,cenab,cenaf]
+    zasedena = [prostae,prostab,prostaf]
+    cur.execute("UPDATE let SET vzletno_letalisce = %s, pristajalno_letalisce = %s, datum_odhoda = %s, datum_prihoda = %s, ura_odhoda = %s, ura_prihoda = %s, letalo_id = %s, ekipa = %s, cena = %s, st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, [0,0,0], zasedena,  id_leta ))
+    conn.commit()
+    return template('org.html', let=let)
+
+
+@get('/odstrani/<id_leta>')
+def odstrani(id_leta):
+    try:
+        cur.execute("DELETE FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+        conn.commit()
+        return template('org.html', let=let)
+    except:
+        return "Izbrani let ni na voljo!"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # povezemo se z bazo
 conn = psycopg2.connect(database=auth_g.db, user=auth_g.user,
                         password=auth_g.password, host=auth_g.host, port=DB_PORT)
@@ -472,8 +574,3 @@ cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # zazenemo/povezemo se s streznikom
 run(host='localhost', port=SERVER_PORT, reloader=True)
-
-
-###################################################
-
-

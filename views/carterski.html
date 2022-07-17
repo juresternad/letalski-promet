@@ -3,15 +3,16 @@
 % setdefault('organizator', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
 
-
 <div class="container">
     <br><br><br><br>
-    <h3>Vroči leti</h3>
+    <h3>Čarterski leti</h3>
     <ul style="font-size: 120%">
         % if leti == []:
         <p>Trenutno ni letov.</p>
         % end
+        % redni = ["Madrid Barajas Airport (MAD)","Barcelona Airport (BCN)","Rome Fiumicino Airport (FCO)","Zurich Airport (ZRH)","Athens Airport (ATH)","Munich International Airport (MUC)","Amsterdam Airport (AMS)","Frankfurt International Airport (FRA)","London Heathrow Airport (LHR)","Paris Charles de Gaulle Airport (CDG)"]
         % for let in leti:
+        % if let[1] not in redni and let[2] not in redni:
         <li><b>Kraj odhoda: </b>{{let[1]}} <br>
             <b>Kraj prihoda: </b>{{let[2]}} <br>
             <b>Datum odhoda: </b>{{let[3]}} {{let[5]}} <br>
@@ -21,6 +22,7 @@
             </form>
         </li>
         % end
+        % end
     </ul>
 
 </div>
@@ -28,3 +30,4 @@
     document.getElementById('datum_odhod').value = new Date().toISOString().substring(0, 10);
     document.getElementById('datum_vrnitev').value = new Date().toISOString().substring(0, 10);
 </script>
+
