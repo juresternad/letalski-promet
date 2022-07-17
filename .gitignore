@@ -160,6 +160,7 @@ cython_debug/
 #.idea/
 
 auth.py
+auth_g.py
 .vscode
 
 TODO.md

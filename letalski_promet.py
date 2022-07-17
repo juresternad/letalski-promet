@@ -5,7 +5,7 @@ from regex import P
 from bottleext import *
 import os
 import hashlib
-import auth
+import auth_g
 
 # se znebimo problemov s šumniki
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -54,11 +54,24 @@ def last_minute():
     leti = []
     try:
         cur.execute(
-            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY st_zasedenih_mest[1], datum_odhoda, ura_odhoda LIMIT 10;")
         leti = cur.fetchall()
     except:
         return "Napaka!"
     return template('last_minute.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
+
+@get('/vroci')  # landing page
+def vroci():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    leti = []
+    try:
+        cur.execute(
+            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY st_zasedenih_mest[1], datum_odhoda, ura_odhoda LIMIT 10;")
+        leti = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('vroci.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
 
 
 @post('/leti/')  # poizvedba za let
@@ -100,8 +113,21 @@ def kupi_karto(id_leta):
             (razred, username, id_leta))
             conn.commit()
         cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+        # TODO if ni vec prostih mest
         kup_karta = cur.fetchone()
-        iz, do, datum, ura = kup_karta[1], kup_karta[2], kup_karta[3], kup_karta[5]
+        iz, do, datum, ura, st_zas_mest, st_pro_mest = kup_karta[1], kup_karta[2], kup_karta[3], kup_karta[5], kup_karta[10], kup_karta[11]
+        if razred == "economy":
+            st_zas_mest[0] += 1
+            st_pro_mest[0] -= 1
+        elif razred == "business":
+            st_zas_mest[1] += 1
+            st_pro_mest[1] -= 1
+        else:
+            st_zas_mest[2] += 1
+            st_pro_mest[2] -= 1
+        
+        print(st_zas_mest, st_pro_mest)
+        cur.execute("UPDATE let SET st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (st_zas_mest, st_pro_mest, id_leta, ))
         return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
       except:
         return "Žal nakup karte ni bil uspešen!"
@@ -440,8 +466,8 @@ def d(iz, do, datum_odhoda, datum_prihoda):
 
 
 # povezemo se z bazo
-conn = psycopg2.connect(database=auth.db, user=auth.user,
-                        password=auth.password, host=auth.host, port=DB_PORT)
+conn = psycopg2.connect(database=auth_g.db, user=auth_g.user,
+                        password=auth_g.password, host=auth_g.host, port=DB_PORT)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 # zazenemo/povezemo se s streznikom
@@ -449,4 +475,5 @@ run(host='localhost', port=SERVER_PORT, reloader=True)
 
 
 ###################################################
+
 

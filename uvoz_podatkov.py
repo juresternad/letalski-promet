@@ -2,7 +2,7 @@ import psycopg2, psycopg2.extensions, psycopg2.extras
 from psycopg2 import sql
 import csv
 # from auth_public import *
-from auth import *
+from auth_g import *
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -24,8 +24,8 @@ def importSQL(file):
 
 
 importSQL('letalski_promet.sql')
-importSQL('podatki\druzbe.sql')
-importSQL('podatki\letalo.sql')
-importSQL('podatki\let.sql')
-importSQL('podatki\delavci_na_letu.sql')
+importSQL('podatki/druzbe.sql')
+importSQL('podatki/letalo.sql')
+importSQL('podatki/let.sql')
+importSQL('podatki/delavci_na_letu.sql')
 

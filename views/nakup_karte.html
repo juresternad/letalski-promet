@@ -9,7 +9,6 @@
         <b>Kraj odhoda: </b>{{let[1]}} <br>
         <b>Kraj prihoda: </b>{{let[2]}} <br>
         <b>Odhod: </b>{{let[3]}} {{let[5]}} <br>
-        <b>Cena karte: </b> {{let[-1]}} eur
 
         <br><br>
         <b>Razred:</b>
@@ -18,15 +17,26 @@
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="razred" id="economy" value="economy" checked="checked">
                 <label class="form-check-label" for="economy">Economy</label>
+                <a>- {{let[-3][0]}} eur</a> 
             </div>
+
+
+
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="razred" id="business" value="business">
                 <label class="form-check-label" for="business">Business</label>
+                <a>- {{let[-3][1]}} eur</a> 
             </div>
+
+
+
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="razred" id="first" value="first">
                 <label class="form-check-label" for="first">First class</label>
+                <a>- {{let[-3][2]}} eur</a> 
             </div>
+
+
 
             <br>
             <label for="st_kart"><b>Število kart:</b></label>

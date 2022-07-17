@@ -16,7 +16,7 @@ CREATE TABLE druzba (
 
 CREATE TABLE letalo (
     id INTEGER PRIMARY KEY,
-    stevilo_sedezev INTEGER NOT NULL,
+    stevilo_sedezev INTEGER[3],
     model TEXT NOT NULL,
     druzba INTEGER NOT NULL REFERENCES druzba(id)
 );
@@ -31,7 +31,9 @@ CREATE TABLE let (
     ura_prihoda TIME NOT NULL,
     letalo_id INTEGER NOT NULL REFERENCES letalo(id),
     ekipa INTEGER NOT NULL,
-    cena DECIMAL NOT NULL
+    cena INTEGER[3],
+    st_zasedenih_mest INTEGER[3],
+    st_prostih_mest INTEGER[3]
 );
 
 CREATE TABLE delavec_na_letu (

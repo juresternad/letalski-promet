@@ -5,7 +5,15 @@
 
 <div class="container">
     <br><br><br><br>
+    %if st_kart == 1:
+    <h5>Uspešno ste kupili <b>{{st_kart}}</b> karto za let:</h5>
+    %elif st_kart == 2:
+    <h5>Uspešno ste kupili <b>{{st_kart}}</b> karti za let:</h5>
+    %elif st_kart== 3 or st_kart== 4:
+    <h5>Uspešno ste kupili <b>{{st_kart}}</b> karte za let:</h5>
+    %else:
     <h5>Uspešno ste kupili <b>{{st_kart}}</b> kart za let:</h5>
+    %end
     <p><b>{{iz}}</b> --> <b>{{do}}</b> ob <b>{{datum}} {{ura}}</b></p>
     <br><br>
     <a href="/profil_uporabnika">Pojdi na svoj profil</a>
