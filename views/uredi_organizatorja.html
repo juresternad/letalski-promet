@@ -1,0 +1,51 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+<div class="container">
+    <form action="/uredi_uporabnika" method="post" autocomplete="off">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ime">Ime</label>
+                <input id="ime" name="ime" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="priimek">Priimek</label>
+                <input id="priimek" name="priimek" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="emso">Emšo</label>
+                <input id="emso" name="emso" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="username">Uporabniško ime</label>
+                <input id="username" name="username" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="password">Geslo</label>
+                <input id="password" name="password" type="password" class="form-control" required
+                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
+            </div>
+        </div>
+        <div class="form-row col">
+            <button class="btn btn-primary" type="submit">
+                Uredi organizatorja
+            </button>
+        </div>
+    </form>
+</div>

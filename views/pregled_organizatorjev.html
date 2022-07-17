@@ -1,0 +1,34 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+
+
+<div class="container">
+    <br><br><br><br>
+    <h3>Organizatorji</h3>
+    <ul style="font-size: 120%">
+        % if organizatorji == []:
+        <p>Trenutno ni organizatorjev.</p>
+        % end
+        % for organizator in organizatorji:
+        <li><b>emso:</b>{{organizator[0]}} <br>
+            <b>ime: </b>{{organizator[1]}} <br>
+            <b>priimek: </b>{{organizator[2]}} <br>
+            <b>uporabnisko_ime: </b>{{organizator[3]}} <br>
+            <b>geslo: </b>{{organizator[4]}} <br>
+            <form action="/uredi_organizatorja/{{organizator[0]}}" method="get">
+                <button type="submit">Uredi</button>
+            </form>
+            <form action="/odstrani_organizatorja/{{organizator[0]}}" method="get">
+                <button type="submit">Odstrani</button>
+            </form>
+        </li>
+        % end
+    </ul>
+
+</div>
+<script>
+    document.getElementById('datum_odhod').value = new Date().toISOString().substring(0, 10);
+    document.getElementById('datum_vrnitev').value = new Date().toISOString().substring(0, 10);
+</script>

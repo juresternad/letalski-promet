@@ -46,7 +46,19 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
                         <a class="dropdown-item" href="/dodaj_let">Dodaj let</a>
-                        <a class="navbar-brand" href="/org">Uredi dodane lete</a>
+                        <a class="dropdown-item" href="/org">Uredi dodane lete</a>
+                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                    </div>
+                </li>
+                %elif uporabnik == None and organizator !=None:
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{organizator[4]}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
+                        <a class="dropdown-item" href="/dodaj_let">Dodaj let</a>
+                        <a class="dropdown-item" href="/org">Uredi dodane lete</a>
                         <a class="dropdown-item" href="/odjava">Odjava</a>
                     </div>
                 </li>

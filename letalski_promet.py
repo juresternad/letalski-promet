@@ -553,6 +553,145 @@ def odstrani(id_leta):
 
 
 
+@get('/pregled_uporabnikov')  # landing page
+def pregled_uporabnikov():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    uporabniki = []
+    try:
+        cur.execute(
+            "SELECT * FROM uporabnik")
+        uporabniki = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('pregled_uporabnikov.html', uporabniki=uporabniki, uporabnik=uporabnik, organizator=organizator)
+
+
+@get('/uredi_uporabnika/<emso>') 
+def uredi_uporabnikaa(emso):
+    cur.execute("SELECT * FROM uporabnik WHERE emso = %s;", (emso, ))
+    uporabnik = cur.fetchall()[0]
+    return template('uredi_uporabnika.html', uporabnik=uporabnik)
+
+@post('/uredi_uporabnika/<emso>') 
+def uredi_uporabnika(emso):
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    email = request.forms.email
+    uporabnisko_ime = request.forms.username
+    geslo = request.forms.password
+    conn.commit()
+    if len(geslo) < 4:
+        nastaviSporocilo('Geslo mora imeti vsaj 4 znake.')
+        return
+    cur = conn.cursor()
+    uporabnik = None
+    try:
+        uporabnik = cur.execute(
+            "SELECT * FROM uporabnik WHERE emso = %s;", (emso, ))
+    except:
+        uporabnik = None
+    if uporabnik is not None:
+        nastaviSporocilo('Ureditev ni možna')
+        return
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            'SELECT * FROM uporabnik WHERE uporabnisko_ime = %s', (uporabnisko_ime, ))
+        uporabnik = cur.fetchone()
+    except:
+        uporabnik = None
+    if uporabnik is not None:
+        nastaviSporocilo('Uporabnisko ime že obstaja!')
+        return
+    zgostitev = hashGesla(geslo)
+    cur.execute("UPDATE uporabnik SET ime = %s, priimek = %s, email = %s, uporabnikso_ime = %s, geslo = %s WHERE emso = %s;", (ime, priimek, email, uporabnisko_ime, zgostitev, emso))
+    conn.commit()
+    return template('pregled_uporabnikov.html', uporabnik=uporabnik)
+
+
+@get('/odstrani_uporabnika/<emso>')
+def odstrani_uporabnika(emso):
+    cur.execute("DELETE FROM uporabnik WHERE emso = %s;", (emso, ))
+    conn.commit()
+
+################################################################
+@get('/pregled_organizatorjev')  # landing page
+def pregled_organizatorjev():
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    organizatorji = []
+    try:
+        cur.execute(
+            "SELECT * FROM organizator_letov")
+        organizatorji = cur.fetchall()
+    except:
+        return "Napaka!"
+    return template('pregled_organizatorjev.html', organizatorji=organizatorji, uporabnik=uporabnik, organizator=organizator)
+
+
+@get('/uredi_organizatorja/<emso>') 
+def uredi_organizatorjaa(emso):
+    cur.execute("SELECT * FROM organizator_letov WHERE emso = %s;", (emso, ))
+    organizator = cur.fetchall()[0]
+    return template('uredi_organizatorja.html', organizator=organizator)
+
+@post('/uredi_organizatorja/<emso>') 
+def uredi_organizatorja(emso):
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    uporabnisko_ime = request.forms.username
+    geslo = request.forms.password
+    conn.commit()
+    if len(geslo) < 4:
+        nastaviSporocilo('Geslo mora imeti vsaj 4 znake.')
+        return
+    cur = conn.cursor()
+    organizator = None
+    try:
+        organizator = cur.execute(
+            "SELECT * FROM organizator_letov WHERE emso = %s;", (emso, ))
+    except:
+        organizator = None
+    if organizator is not None:
+        nastaviSporocilo('Ureditev ni možna')
+        return
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            'SELECT * FROM organizator_letov WHERE uporabnisko_ime = %s', (uporabnisko_ime, ))
+        organizator = cur.fetchone()
+    except:
+        organizator = None
+    if organizator is not None:
+        nastaviSporocilo('Uporabnisko ime že obstaja!')
+        return
+    zgostitev = hashGesla(geslo)
+    cur.execute("UPDATE organizator_letov SET ime = %s, priimek = %s, uporabnisko_ime = %s, geslo = %s WHERE emso = %s;", (ime, priimek, uporabnisko_ime, zgostitev, emso))
+    conn.commit()
+    return template('pregled_organizatorjev.html', organizator=organizator)
+
+
+@get('/odstrani_organizatorja/<emso>')
+def odstrani_organizatorja(emso):
+    cur.execute("DELETE FROM organizator_letov WHERE emso = %s;", (emso, ))
+    conn.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # povezemo se z bazo
 conn = psycopg2.connect(database=auth_g.db, user=auth_g.user,
                         password=auth_g.password, host=auth_g.host, port=DB_PORT)
