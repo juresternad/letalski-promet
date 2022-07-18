@@ -31,13 +31,6 @@ def index():
     uporabnik = aliUporabnik()
     organizator = aliOrganizator()
     leti = []
-    # TODO to se nikoli ne vidi ce so une slike
-    try:
-        cur.execute(
-            "SELECT * FROM let WHERE CURRENT_DATE < datum_odhoda OR (CURRENT_DATE = datum_odhoda AND CURRENT_TIME < ura_odhoda) ORDER BY datum_odhoda, ura_odhoda LIMIT 10;")
-        leti = cur.fetchall()
-    except:
-        return "Napaka!"
     return template('index.html', leti=leti, uporabnik=uporabnik, organizator=organizator)
 
 @get("/views/images/<filepath:re:.*\.(jpg|png|gif|ico|svg)>")
@@ -96,14 +89,14 @@ def let():
     datum_odhoda = request.forms.datum_odhoda
     datum_vrnitve = request.forms.datum_vrnitve
     razred = request.forms.razred
-    direkten = request.forms.direkten
+    enosmeren = request.forms.enosmeren
     cur.execute("SELECT * FROM let WHERE vzletno_letalisce = %s AND pristajalno_letalisce = %s AND datum_prihoda = %s;",
                 (iz, do, datum_odhoda)) #  AND datum_odhoda = %s
     ustrezni_leti = cur.fetchall()
-    if ustrezni_leti == [] and direkten != 'on':
-        redirect(f'/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}')
-    elif ustrezni_leti == [] and direkten == 'on':
-        return f'<h2>Ni ustreznih letov!</h2><a href="/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}">prestopi</a>'
+    if enosmeren == '0':
+        redirect(f'/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}/{enosmeren}')
+    elif enosmeren == '1':
+        redirect(f'/d/{"-".join(iz.split())}/{"-".join(do.split())}/{datum_odhoda}/{datum_vrnitve}/{razred}/{enosmeren}')
     else:
         return template('ustrezni_leti.html', ustrezni_leti=ustrezni_leti)
 
@@ -348,7 +341,7 @@ def kupljene_karte():
             "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
         uporabnik = cur.fetchone()
         cur.execute(
-            "SELECT * FROM karta WHERE uporabnisko_ime = %s LIMIT 10;", (username, ))
+            "SELECT * FROM karta WHERE uporabnisko_ime = %s;", (username, ))
         kupljene_karte = cur.fetchall()
         leti = []
         # TODO mogoce je bolje ce naredi join in je tako samo ena poizvedba
@@ -450,7 +443,7 @@ def dodaj_let_post():
     cur = conn.cursor()
     cur.execute("INSERT INTO let (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, st_zasedenih_mest, st_prostih_mest) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, zasedena, [0,0,0] ))
     conn.commit()
-    redirect(url('/dodaj_let'))
+    redirect(url('/'))
 ####################################################
 
 ############################################
@@ -459,35 +452,50 @@ def dodaj_let_post():
 from dijkstra import slovar_letalisc, dijkstraish, pot
 from datetime import datetime
 
-@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>/<razred>')
-def d(iz, do, datum_odhoda, datum_prihoda, razred=0):
-    try: 
-        cur.execute('SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda >= %s AND datum_odhoda <= %s;', (datum_odhoda, datum_prihoda))
-        leti = cur.fetchall()
-        # print(leti)
-        G = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
-        for let in leti:
-            stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cene = let
-            if vzletno_letalisce not in slovar_letalisc:
-                continue
-            d1 = datetime.combine(datum_odhoda, ura_odhoda)
-            t1 = datetime.timestamp(d1)
-            d2 = datetime.combine(datum_prihoda, ura_prihoda)
-            t2 = datetime.timestamp(d2)
-            G[slovar_letalisc[vzletno_letalisce]].append((cene[int(razred)], t1, t2, slovar_letalisc[pristajalno_letalisce], stevilka_leta))
-        # print(G)
-        # print(len(G))
-        s, t = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
-        cena_potovanja, pot = dijkstraish(G, s, t)
-        # print(cena_potovanja, pot)
-        zaporedni_leti = []
-        # TODO to je cisto prevec poizvedb ko delas s for zanko (ali se da narediti poizvedbo v enem kosu??)
-        for st_leta in pot:
-            cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta, ))
-            zaporedni_leti.append(cur.fetchone())
-        return template('dijkstra_let.html', cena_potovanja=cena_potovanja, zaporedni_leti=zaporedni_leti)
-    except:
-        return "nista"
+@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>/<razred>/<enosmeren>')
+def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
+
+    cur.execute("SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_odhoda, datum_odhoda))
+    leti = cur.fetchall()
+    G = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
+    for let in leti:
+        stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cene = let
+        if vzletno_letalisce not in slovar_letalisc:
+            continue
+        d1 = datetime.combine(datum_odhoda, ura_odhoda)
+        t1 = datetime.timestamp(d1)
+        d2 = datetime.combine(datum_prihoda, ura_prihoda)
+        t2 = datetime.timestamp(d2)
+        G[slovar_letalisc[vzletno_letalisce]].append((cene[int(razred)], t1, t2, slovar_letalisc[pristajalno_letalisce], stevilka_leta))
+    s, t = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
+    cena_potovanja, pot = dijkstraish(G, s, t)
+    pot_tja = []
+    for st_leta in pot:
+        cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta, ))
+        pot_tja.append(cur.fetchone())
+
+    cur.execute("SELECT stevilka_leta, pristajalno_letalisce, vzletno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_prihoda < %s:: date + INTERVAL '3 day' AND datum_prihoda >= %s:: date ;", (datum_prihoda, datum_prihoda ))
+    leti2 = cur.fetchall()
+    M = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
+    for let2 in leti2 :
+        stevilka_leta2, vzletno_letalisce2, pristajalno_letalisce2, datum_odhoda2, datum_prihoda2, ura_odhoda2, ura_prihoda2, cene2 = let2
+        if vzletno_letalisce2 not in slovar_letalisc:
+            continue
+        d12 = datetime.combine(datum_odhoda2, ura_odhoda2)
+        t12 = datetime.timestamp(d12)
+        d22 = datetime.combine(datum_prihoda2, ura_prihoda2)
+        t22 = datetime.timestamp(d22)
+        M[slovar_letalisc[vzletno_letalisce2]].append((cene2[int(razred)], t12, t22, slovar_letalisc[pristajalno_letalisce2], stevilka_leta2))
+    s2, t2 = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
+    cena_potovanja_nazaj, pot2 = dijkstraish(M, s2, t2)
+    pot_nazaj = []
+    for st_leta2 in pot2:
+        cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta2, ))
+        pot_nazaj.append(cur.fetchone())
+    pot_nazaj = pot_nazaj[::-1]
+    return template('dijkstra_let.html', cena_potovanja=cena_potovanja,cena_potovanja_nazaj=cena_potovanja_nazaj, pot_tja=pot_tja,pot_nazaj=pot_nazaj,razred=razred, enosmeren = enosmeren)
+
+    
 
 
 

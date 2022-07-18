@@ -34,8 +34,11 @@
             <option value="1">Business</option>
             <option value="2">First class</option>
         </select>
-        <label for="direkten">Direkten let:</label>
-        <input type="checkbox" name="direkten" checked="1"/>
+        <label for="enosmeren">Enosmeren/Povraten :</label>
+        <select name="enosmeren">
+            <option value="0">Enosmeren</option>
+            <option value="1">Povraten</option>
+        </select>
         
     </form>
 
@@ -47,7 +50,7 @@
         <img src="{{url('static', filename= '/images/vroci.png')}}" width="300" height="200">
     </a>
     <a href="{{url('carterski')}}">
-        <img src="{{url('static', filename= '/images/cart.png')}}" width="300" height="200">
+        <img src="{{url('static', filename= '/images/carter.png')}}" width="300" height="200">
     </a>
     <!-- <a href="{{url('last_minute')}}">
         <img src="{{url('static', filename= '/images/zniz.png')}}" width="300" height="200">
