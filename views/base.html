@@ -22,10 +22,36 @@
         </div>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                %if uporabnik == None and organizator ==None and admin ==None:
+                %if uporabnik == None and organizator == None and admin ==None:
                 <li class="nav-item dropdown">
                     <a href="/prijava">Prijava</a>
                     <a href="/registracija">Registracija</a> 
+                </li>
+                %elif uporabnik != None and organizator == None and admin != None:
+                <div class="container-fluid">
+                    <a class="navbar-item" href="/pregled_uporabnikov">Uporabniki</a>
+                </div>
+                <div class="container-fluid">
+                    <a class="navbar-item" href="/pregled_organizatorjev">Organizatorji</a>
+                </div>
+                <div class="container-fluid">
+                    <a class="navbar-item" href="/org">Leti</a>
+                </div>
+                <div class="container-fluid">
+                    <a class="navbar-item" href="/dodaj_organizatorja">Dodaj organizatorja</a>
+                </div>
+                <div class="container-fluid">
+                    <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
+                </div>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                        {{uporabnik[3]}}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
+                        <a class="dropdown-item" href="/sprememba_gesla">Spremeni geslo</a>
+                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                    </div>
                 </li>
                 %elif uporabnik != None and organizator ==None and admin ==None:
                 <li class="nav-item dropdown">
@@ -45,26 +71,6 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                         {{organizator[3]}}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
-                        <a class="dropdown-item" href="/sprememba_gesla">Spremeni geslo</a>
-                        <a class="dropdown-item" href="/odjava">Odjava</a>
-                    </div>
-                </li>
-                %elif uporabnik == None and organizator == None and admin != None:
-                <div class="container-fluid">
-                    <a class="navbar-item" href="/pregled_uporabnikov">Uporabniki</a>
-                </div>
-                <div class="container-fluid">
-                    <a class="navbar-item" href="/pregled_organizatorjev">Organizatorji</a>
-                </div>
-                <div class="container-fluid">
-                    <a class="navbar-item" href="/org">Leti</a>
-                </div>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                        {{uporabnik[3]}}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>

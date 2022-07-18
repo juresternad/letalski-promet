@@ -106,7 +106,6 @@ def let():
 
 
 
-# TODO povratna? to lahko das na zacetno stran in ce ni leta nazaj pac ni povratne
 @get('/kupi/<id_leta>')
 def nakup_karte(id_leta):
     try:
@@ -122,31 +121,26 @@ def kupi_karto(id_leta):
     razred = request.forms.razred
     st_kart = int(request.forms.st_kart)
     if username is not None:
-      # ali sploh lahko en uporabnik kupi več kart
-      try:  # TODO problem je stevilka_sedeza ker ne ves kdaj je letalo polno
         for _ in range(st_kart):
             cur.execute("insert into karta (razred, uporabnisko_ime, stevilka_leta) values (%s,%s,%s);", 
             (razred, username, id_leta))
             conn.commit()
         cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
-        # TODO if ni vec prostih mest
         kup_karta = cur.fetchone()
         iz, do, datum, ura, st_zas_mest, st_pro_mest = kup_karta[1], kup_karta[2], kup_karta[3], kup_karta[5], kup_karta[10], kup_karta[11]
         if razred == "economy":
-            st_zas_mest[0] += st_kart
-            st_pro_mest[0] -= st_kart
+            i = 0
         elif razred == "business":
-            st_zas_mest[1] += st_kart
-            st_pro_mest[1] -= st_kart
+            i = 1
         else:
-            st_zas_mest[2] += st_kart
-            st_pro_mest[2] -= st_kart
-        
-        print(st_zas_mest, st_pro_mest)
-        cur.execute("UPDATE let SET st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (st_zas_mest, st_pro_mest, id_leta, ))
-        return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
-      except:
-        return "Žal nakup karte ni bil uspešen!"
+            i = 2
+        prosto = st_pro_mest[i] - st_kart
+        if prosto >= 0:
+            st_zas_mest[i] += st_kart
+            st_pro_mest[i] -= st_kart
+            cur.execute("UPDATE let SET st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (st_zas_mest, st_pro_mest, id_leta, ))
+            return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
+        return "Žal ni več prostih sedežev. Za izbrani razred je trenutno na voljo samo še {}.".format(st_pro_mest[i])
     else:
         redirect(url('/prijava'))
 
@@ -274,8 +268,7 @@ def registracija_post():
 @get('/prijava')
 def prijava_get():
     napaka = nastaviSporocilo()
-    admin = aliAdmin()
-    return template('prijava.html', napaka=napaka, admin = admin)
+    return template('prijava.html', napaka=napaka)
 
 
 @post('/prijava')
