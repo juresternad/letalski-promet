@@ -1,12 +1,13 @@
 % setdefault('napaka', '')
 % setdefault('uporabnik', '')
 % setdefault('organizator', '')
-% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator)
+% setdefault('admin', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 
 
 <div class="container">
     <br><br><br><br>
-    <h3>Last-minute leti</h3>
+    <h3>Leti</h3>
     <ul style="font-size: 120%">
         % if leti == []:
         <p>Trenutno ni letov.</p>

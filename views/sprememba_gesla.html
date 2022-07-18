@@ -1,0 +1,41 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% setdefault('admin', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
+
+
+<form action="{{url('sprememba_gesla_post')}}" method="post" style="padding-bottom: 20px;" autocomplete="off">
+
+    
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="geslo">Geslo</label>
+            <input id="geslo" name="geslo" type="password" class="form-control" required
+                oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Obvezno polje')"
+                />
+            <small id="geslo" class="form-text text-muted">Novo geslo.</small>
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="geslo2">Še enkrat vnesi geslo</label>
+            <input id="geslo2" name="geslo2" type="password" class="form-control" required
+                oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Obvezno polje')"
+                />
+            <small id="geslo2" class="form-text text-muted">Gesli se morata ujemati.</small>
+        </div>
+    </div>
+
+    <div class="form-row d-flex justify-content-start">
+        <button class="btn btn-primary" type="submit">
+            Spremeni geslo
+        </button>
+    </div>
+</form>
+
+

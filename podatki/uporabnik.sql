@@ -1,0 +1,1 @@
+insert into uporabnik (emso, ime, priimek, email, uporabnisko_ime, geslo) values (1, 'administrator', 'vsemogocni', 'administr@tor.com', 'ad',1111);

@@ -28,4 +28,6 @@ importSQL('podatki/druzbe.sql')
 importSQL('podatki/letalo.sql')
 importSQL('podatki/let.sql')
 importSQL('podatki/delavci_na_letu.sql')
+importSQL('podatki/uporabnik.sql')
+
 
