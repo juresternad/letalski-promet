@@ -4,7 +4,7 @@
 % setdefault('admin', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 <div class="container">
-    <form action="/uredi_uporabnika" method="post" autocomplete="off">
+    <form action="/uredi_organizatorja/{{organizator[0]}}" method="post" autocomplete="off">
 
         <div class="form-row">
             <div class="form-group col-md-6">
