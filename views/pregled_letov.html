@@ -1,6 +1,13 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% setdefault('admin', '')
+% rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
+
+
 <div class="container">
     <br><br><br><br>
-    <h3>Last-minute leti</h3>
+    <h3>Leti</h3>
     <ul style="font-size: 120%">
         % if leti == []:
         <p>Trenutno ni letov.</p>
@@ -10,10 +17,10 @@
             <b>Kraj prihoda: </b>{{let[2]}} <br>
             <b>Datum odhoda: </b>{{let[3]}} {{let[5]}} <br>
             <b>Že od:</b> {{let[9][0]}} evrov 
-            <form action="/uredi" method="get">
+            <form action="/uredi/{{let[0]}}" method="get">
                 <button type="submit">Uredi</button>
             </form>
-            <form action="/odstrani" method="get">
+            <form action="/odstrani/{{let[0]}}" method="get">
                 <button type="submit">Odstrani</button>
             </form>
         </li>

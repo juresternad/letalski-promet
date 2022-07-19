@@ -13,49 +13,56 @@
         <title>ads</title>
     <!-- <link rel="stylesheet" type="text/css" href="/static/stili.css" /> -->
 
+    <style>
+        body {
+          background-image: url('/static/images/ozadje.jpeg');
+          background-attachment: fixed;  
+        }
+    </style>
+
 </head>
 
 <body>
+    
+        
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
+        <div class="container-fluid" id="navbarNavAltMarkup">
             <a class="navbar-brand" href="/">Letalske karte</a>
         </div>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 %if uporabnik == None and organizator == None and admin ==None:
-                <li class="nav-item dropdown">
-                    <a href="/prijava">Prijava</a>
+                <li> <a href="/prijava">Prijava</a> 
                     <a href="/registracija">Registracija</a> 
                 </li>
                 %elif uporabnik != None and organizator == None and admin != None:
-                <div class="container-fluid">
+                <div class="container-fluid" id="navbarNavAltMarkup">
                     <a class="navbar-item" href="/pregled_uporabnikov">Uporabniki</a>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid" id="navbarNavAltMarkup">
                     <a class="navbar-item" href="/pregled_organizatorjev">Organizatorji</a>
                 </div>
-                <div class="container-fluid">
-                    <a class="navbar-item" href="/org">Leti</a>
+                <div class="container-fluid" id="navbarNavAltMarkup">
+                    <a class="navbar-item" href="/pregled_letov">Leti</a>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid" id="navbarNavAltMarkup">
                     <a class="navbar-item" href="/dodaj_organizatorja">Dodaj organizatorja</a>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid" id="navbarNavAltMarkup">
                     <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
                 </div>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                        {{uporabnik[3]}}
+                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp {{uporabnik[4]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/sprememba_gesla">Spremeni geslo</a>
                         <a class="dropdown-item" href="/odjava">Odjava</a>
                     </div>
                 </li>
                 %elif uporabnik != None and organizator ==None and admin ==None:
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{uporabnik[4]}}
+                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{uporabnik[4]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/profil_uporabnika">Moj profil</a>
@@ -66,10 +73,10 @@
                 </li>
                 %elif uporabnik == None and organizator !=None and admin == None:
                 <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
-                <a class="navbar-item" href="/org">Uredi lete</a>
+                <a class="navbar-item" href="/pregled_letov">Uredi lete</a>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                        {{organizator[3]}}
+                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{organizator[3]}}&nbsp &nbsp &nbsp &nbsp{
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>

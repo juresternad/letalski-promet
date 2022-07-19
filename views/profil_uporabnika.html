@@ -11,34 +11,20 @@
       <th>Emšo</th>
       <th>Ime</th>
       <th>Priimek</th>
+      <th>Email</th>
       <th>Uporabniško ime</th>
-      <!-- TODO <th>Telefon</th> -->
     </tr>
+    %for (emso, ime, priimek, email, uporabnisko_ime) in uporabnik:
     <tr>
-      <td>{{uporabnik[0]}}</td>
-      <td>{{uporabnik[1]}}</td>
-      <td>{{uporabnik[2]}}</td>
-      <td>{{uporabnik[3]}}</td>
+      <td>{{emso}}</td>
+      <td>{{ime}}</td>
+      <td>{{priimek}}</td>
+      <td>{{email}}</td>
+      <td>{{uporabnisko_ime}}</td>
     </tr>
+    %end
   </table>
-  <h1>Kupljene karte</h1>
-  <table id="kupljene_karte" class="table table-hover">
-    <tr>
-      <th>id</th>
-      <th>Vzletno letališče</th>
-      <th>Pristajalno letališče</th>
-      <th>Čas odhoda</th>
-      <!-- TODO <th>Telefon</th> -->
-    </tr>
-    %for (id, vzletno, pristajalno, datum_odhoda, ura_odhoda) in leti:
-    <tr>
-      <td>{{id}}</td>
-      <td>{{vzletno}}</td>
-      <td>{{pristajalno}}</td>
-      <td>{{datum_odhoda}} {{ura_odhoda}}</td>
-    </tr>
-      %end
-  </table>
-  
+
+  <a href="/sprememba_gesla">Spremeni geslo</a>
 
 </div>
