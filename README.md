@@ -5,7 +5,7 @@
 
 To je repozitorij projekta pri predmetu Osnove podatkovnih baz. 
 
-Projekt skuša posnemati delovanje letalskega prometa. Dostop do aplikacije se deli na: dostop potnikov, dostop organizatorjev in dostop administratorja. Kot prikazano na spodnji sliki, je v bazi dodanih 10 letališč in 20 rednih letov med njimi. Potnik lahko izbira med poljubnima letališčema iz spodnje slike, prav tako pa se lahko odloči za čarterski let, ki ga je dodal eden od organizatorjev oz. administrator.
+Projekt skuša posnemati delovanje komercialnega letalskega prometa. Dostop do aplikacije se deli na: dostop potnikov, dostop organizatorjev in dostop administratorja. Kot prikazano na spodnji sliki, je v bazi dodanih 10 letališč in 20 rednih letov med njimi. Potnik lahko izbira med poljubnima letališčema iz spodnje slike, prav tako pa se lahko odloči za čarterski let, ki ga je dodal eden od organizatorjev oz. administrator.
 
 <img src="slike/slika_leti.jpg">
 
