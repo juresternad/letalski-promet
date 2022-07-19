@@ -56,16 +56,13 @@ CREATE TABLE uporabnik (
 CREATE TABLE karta (
     stevilka_narocila SERIAL PRIMARY KEY,
     razred TEXT NOT NULL,
-    uporabnisko_ime TEXT NOT NULL,
+    uporabnisko_ime TEXT REFERENCES uporabnik(uporabnisko_ime),
     stevilka_sedeza SERIAL,
     stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
-    -- cas_nakupa TIMESTAMP NOT NULL,
 );
 
--- TODO dodaj letalisca (tako naredis le poivedbo v dijkstri in sproti zgenerirs slovar)
 
 
--- TODO: organizator letov je uporabnik s posebnim dovoljenjem
 CREATE TABLE organizator_letov (
     emso INTEGER PRIMARY KEY,
     ime TEXT NOT NULL,
@@ -87,10 +84,7 @@ GRANT ALL ON ALL TABLES IN SCHEMA public TO jurest;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO jurest;
 
 
-GRANT ALL ON DATABASE sem2022_gasperk TO filipb;
-GRANT ALL ON SCHEMA public TO filipb;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO filipb;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO filipb;
+
 
 --  dodatne pravice za uporabo aplikacije
 --  GRANT INSERT ON karta TO potniki;
