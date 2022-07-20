@@ -56,9 +56,9 @@ CREATE TABLE uporabnik (
 CREATE TABLE karta (
     stevilka_narocila SERIAL PRIMARY KEY,
     razred TEXT NOT NULL,
-    uporabnisko_ime TEXT REFERENCES uporabnik(uporabnisko_ime),
+    uporabnisko_ime TEXT REFERENCES uporabnik(uporabnisko_ime) ON DELETE CASCADE,
     stevilka_sedeza SERIAL,
-    stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta)
+    stevilka_leta INTEGER NOT NULL REFERENCES let(stevilka_leta) ON DELETE CASCADE
 );
 
 

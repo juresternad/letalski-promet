@@ -72,11 +72,15 @@
                     </div>
                 </li>
                 %elif uporabnik == None and organizator !=None and admin == None:
-                <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
-                <a class="navbar-item" href="/pregled_letov">Uredi lete</a>
+                <div class="container-fluid" id="navbarNavAltMarkup">
+                    <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
+                </div>
+                <div class="container-fluid" id="navbarNavAltMarkup">
+                    <a class="navbar-item" href="/pregled_letov">Uredi let</a>
+                </div>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{organizator[3]}}&nbsp &nbsp &nbsp &nbsp{
+                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{organizator[3]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>

@@ -5,8 +5,8 @@ from regex import P
 from bottleext import *
 import os
 import hashlib
-# import auth_g
-import auth_public as auth_g
+import auth_g
+# import auth_public as auth_g
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -276,38 +276,34 @@ def prijava_post():
     try:
         cur.execute(
             "SELECT geslo FROM uporabnik WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
-        uporabnikk = cur.fetchone()
-        if geslo == uporabnikk[0]:
-            response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
-            redirect(url('/'))
+        potnik_geslo = cur.fetchone()
+        potnik_geslo = potnik_geslo[0]
+    except: 
+        potnik_geslo = None
+    try:
+        cur.execute(
+            "SELECT geslo FROM organizator_letov WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
+        organizator_geslo = cur.fetchone()
+        organizator_geslo = organizator_geslo[0]
     except:
-        try:
-            cur.execute(
-                "SELECT geslo FROM organizator_letov WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
-            organizator_geslo = cur.fetchone()
-            organizator_geslo = organizator_geslo[0]
-        except:
-            organizator_geslo = None
-            potnik_geslo = None
-            cur.execute(
-                "SELECT geslo FROM uporabnik WHERE uporabnisko_ime=%s;", (uporabnisko_ime, ))
-            potnik_geslo = cur.fetchone()
-            potnik_geslo = potnik_geslo[0]
-            if potnik_geslo is None and organizator_geslo is None:
-                nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni')
-                redirect(url('/prijava'))
-                return
-            if hashGesla(geslo) != potnik_geslo and hashGesla(geslo) != organizator_geslo:
-                nastaviSporocilo('Uporabniško geslo ali ime nista ustrezni')
-                redirect(url('/prijava'))
-                return
-    else:
+        organizator_geslo = None
+    cur = conn.cursor()
+    if potnik_geslo is None and organizator_geslo is None and geslo != potnik_geslo:
+        nastaviSporocilo('Uporabnik ne obstaja')
+        redirect(url('/prijava'))
+        return
+    elif hashGesla(geslo) != potnik_geslo and hashGesla(geslo) != organizator_geslo and geslo != potnik_geslo: 
+        nastaviSporocilo('Uporabniško ime in geslo se ne ujemata')
+        redirect(url('/prijava'))
+        return
+    response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
+    if geslo == potnik_geslo:
         response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
-        if potnik_geslo is None:
-            redirect(url('/'))
-
-        if organizator_geslo is None:
-            redirect(url('/')) # redirect to page you came from
+        redirect(url('/'))
+    elif potnik_geslo is None:
+        redirect(url('/'))
+    elif organizator_geslo is None:
+        redirect(url('/')) # redirect to page you came from
 
 
 
@@ -416,9 +412,11 @@ def profil_organizatorja():
 
 @get('/dodaj_organizatorja')
 def dodaj_organizatorja_get():
-    organizator = aliOrganizator()
     uporabnik = aliUporabnik()
     admin = aliAdmin()
+    if admin is None:
+        return 
+    organizator = aliOrganizator()
     napaka = nastaviSporocilo()
     return template('dodaj_organizatorja.html', napaka=napaka, uporabnik=uporabnik, admin=admin, organizator = organizator)
 
@@ -448,6 +446,13 @@ def dodaj_organizatorja_post():
         organizatorr = cur.fetchone()
     except:
         organizatorr = None
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            'SELECT * FROM uporabnik WHERE uporabnisko_ime = %s;', (uporabnisko_ime, ))
+        organizatorr = cur.fetchone()
+    except:
+        organizatorr = None
     if organizatorr is not None:
         nastaviSporocilo('Uporabnisko ime že obstaja!')
         redirect(url('/dodaj_organizatorja'))
@@ -455,7 +460,7 @@ def dodaj_organizatorja_post():
     zgostitev = hashGesla(geslo)
     cur.execute("INSERT INTO organizator_letov (emso, ime, priimek, uporabnisko_ime, geslo) VALUES (%s, %s, %s, %s, %s);", (emso, ime, priimek, uporabnisko_ime, zgostitev))
     conn.commit()
-    redirect(url('/'))
+    redirect(url('/pregled_organizatorjev'))
 
 
 
@@ -468,6 +473,8 @@ def dodaj_let_get():
     organizator = aliOrganizator()
     uporabnik = aliUporabnik()
     admin = aliAdmin()
+    if admin is None and organizator is None:
+        return
     napaka = nastaviSporocilo()
     return template('dodaj_let.html', napaka=napaka, organizator=organizator, uporabnik = uporabnik,admin = admin)
 
@@ -553,9 +560,11 @@ def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
 ############################################
 @get('/pregled_letov')  
 def pregled_letov():
+    organizator = aliOrganizator()
     uporabnik = aliUporabnik()
     admin = aliAdmin()
-    organizator = aliOrganizator()
+    if admin is None and organizator is None:
+        return
     leti = []
     try:
         cur.execute(
@@ -569,18 +578,25 @@ def pregled_letov():
 
 @get('/uredi/<id_leta>')
 def uredi(id_leta):
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    admin = aliAdmin()
+    if admin is None and organizator is None:
+        return
     try:
         cur.execute("SELECT * FROM let WHERE stevilka_leta = %s;", (id_leta, ))
         let = cur.fetchall()[0]
-        return template('uredi.html', let=let)
+        return template('uredi.html', let=let,uporabnik = uporabnik, organizator = organizator, admin = admin)
     except:
         return "Izbrani let ni na voljo!"
 
 @post('/uredi/<id_leta>') 
 def uredi_post(id_leta):
-    uporabnik = aliUporabnik()
     organizator = aliOrganizator()
+    uporabnik = aliUporabnik()
     admin = aliAdmin()
+    if admin is None and organizator is None:
+        return
     leti = []
     try:
         vzletno_letalisce = request.forms.vzletno_letalisce
@@ -598,8 +614,8 @@ def uredi_post(id_leta):
         prostab = int(request.forms.prostab)
         prostaf = int(request.forms.prostaf)
         cena = [cenae,cenab,cenaf]
-        zasedena = [prostae,prostab,prostaf]
-        cur.execute("UPDATE let SET vzletno_letalisce = %s, pristajalno_letalisce = %s, datum_odhoda = %s, datum_prihoda = %s, ura_odhoda = %s, ura_prihoda = %s, letalo_id = %s, ekipa = %s, cena = %s, st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, [0,0,0], zasedena,  id_leta ))
+        prosta = [prostae,prostab,prostaf]
+        cur.execute("UPDATE let SET vzletno_letalisce = %s, pristajalno_letalisce = %s, datum_odhoda = %s, datum_prihoda = %s, ura_odhoda = %s, ura_prihoda = %s, letalo_id = %s, ekipa = %s, cena = %s, st_zasedenih_mest = %s, st_prostih_mest = %s WHERE stevilka_leta = %s;", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, [0,0,0], prosta,  id_leta ))
         conn.commit()
         leti = []
         cur.execute(
@@ -612,19 +628,19 @@ def uredi_post(id_leta):
 
 @get('/odstrani/<id_leta>')
 def odstrani(id_leta):
-    uporabnik = aliUporabnik()
     organizator = aliOrganizator()
     admin = aliAdmin()
+    uporabnik = aliUporabnik()
+    if admin is None and organizator is None:
+        return
     leti = []
-    try:
-        cur.execute("DELETE FROM let WHERE stevilka_leta = %s;", (id_leta, ))
-        conn.commit()
-        cur.execute(
-            "SELECT * FROM let")
-        leti = cur.fetchall()
-        return template('pregled_letov.html', leti = leti, uporabnik = uporabnik, organizator = organizator, admin = admin)
-    except:
-        return "Izbrani let ni na voljo!"
+
+    cur.execute("DELETE FROM let WHERE stevilka_leta = %s;", (id_leta, ))
+    conn.commit()
+    cur.execute(
+        "SELECT * FROM let")
+    leti = cur.fetchall()
+    return template('pregled_letov.html', leti = leti, organizator = organizator, admin = admin, uporabnik = uporabnik)
 
 ############################################
 ### Urejanje uporabnikov
@@ -633,9 +649,11 @@ def odstrani(id_leta):
 
 @get('/pregled_uporabnikov')  
 def pregled_uporabnikov():
-    admin = aliAdmin()
-    uporabnik = aliUporabnik()
     organizator = aliOrganizator()
+    uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    if admin is None:
+        return
     uporabniki = []
     try:
         cur.execute(
@@ -648,14 +666,22 @@ def pregled_uporabnikov():
 
 @get('/uredi_uporabnika/<emso>') 
 def uredi_uporabnika(emso):
+    uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    organizator = aliOrganizator()
+    if admin is None:
+        return
     cur.execute("SELECT * FROM uporabnik WHERE emso = %s;", (emso, ))
-    uporabnik = cur.fetchall()[0]
-    return template('uredi_uporabnika.html', uporabnik=uporabnik)
+    uporabnik2 = cur.fetchall()[0]
+    return template('uredi_uporabnika.html', uporabnik = uporabnik, admin = admin, organizator = organizator, uporabnik2 = uporabnik2)
 
 @post('/uredi_uporabnika/<emso>') 
 def uredi_uporabnika_post(emso):
+    uporabnik = aliUporabnik()
     admin = aliAdmin()
-    uporabnik2 = aliUporabnik()
+    if admin is None:
+        return
+    organizator = aliOrganizator()
     ime = request.forms.ime
     priimek = request.forms.priimek
     email = request.forms.email
@@ -666,23 +692,23 @@ def uredi_uporabnika_post(emso):
         nastaviSporocilo('Geslo mora imeti vsaj 4 znake.')
         return
     cur = conn.cursor()
-    uporabnik = None
+    uporabnik2 = None
     try:
-        uporabnik = cur.execute(
+        uporabnik2 = cur.execute(
             "SELECT * FROM uporabnik WHERE emso = %s;", (emso, ))
     except:
-        uporabnik = None
-    if uporabnik is not None:
+        uporabnik2 = None
+    if uporabnik2 is not None:
         nastaviSporocilo('Ureditev ni možna')
         return
     try:
         cur = conn.cursor()
         cur.execute(
             'SELECT * FROM uporabnik WHERE uporabnisko_ime = %s', (uporabnisko_ime, ))
-        uporabnik = cur.fetchone()
+        uporabnik2 = cur.fetchone()
     except:
-        uporabnik = None
-    if uporabnik is not None:
+        uporabnik2 = None
+    if uporabnik2 is not None:
         nastaviSporocilo('Uporabnisko ime že obstaja!')
         return
     zgostitev = hashGesla(geslo)
@@ -691,28 +717,33 @@ def uredi_uporabnika_post(emso):
     cur.execute(
             "SELECT * FROM uporabnik")
     uporabniki = cur.fetchall()
-    return template('pregled_uporabnikov.html', uporabniki=uporabniki, admin = admin, uporabnik = uporabnik2)
+    return template('pregled_uporabnikov.html', uporabniki=uporabniki, admin = admin, uporabnik = uporabnik, organizator = organizator,uporabnik2 = uporabnik2)
 
 
 @get('/odstrani_uporabnika/<emso>')
 def odstrani_uporabnika(emso):
+    organizator = aliOrganizator()
+    uporabnik = aliUporabnik()
     admin = aliAdmin()
-    uporabnik2 = aliUporabnik()
+    if admin is None:
+        return
     cur.execute("DELETE FROM uporabnik WHERE emso = %s;", (emso, ))
     conn.commit()
     cur.execute(
             "SELECT * FROM uporabnik")
     uporabniki = cur.fetchall()
-    return template('pregled_uporabnikov.html', uporabniki=uporabniki, admin = admin, uporabnik = uporabnik2)
+    return template('pregled_uporabnikov.html', uporabniki=uporabniki, admin = admin, uporabnik = uporabnik, organizator = organizator)
 
 ############################################
 ### Urejanje organizatorjev
 ############################################
 @get('/pregled_organizatorjev')  
 def pregled_organizatorjev():
-    admin = aliAdmin()
-    uporabnik = aliUporabnik()
     organizator = aliOrganizator()
+    uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    if admin is None:
+        return
     organizatorji = []
     try:
         cur.execute(
@@ -726,16 +757,23 @@ def pregled_organizatorjev():
 
 @get('/uredi_organizatorja/<emso>') 
 def uredi_organizatorja(emso):
-    admin = aliAdmin()
     uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    organizator = aliOrganizator()
+    if admin is None:
+        return
     cur.execute("SELECT * FROM organizator_letov WHERE emso = %s;", (emso, ))
-    organizator = cur.fetchall()[0]
-    return template('uredi_organizatorja.html', organizator=organizator, uporabnik=uporabnik,admin = admin)
+    organizator2 = cur.fetchall()[0]
+    return template('uredi_organizatorja.html', organizator=organizator, uporabnik=uporabnik,admin = admin, organizator2 = organizator2)
 
 @post('/uredi_organizatorja/<emso>') 
 def uredi_organizatorja_post(emso):
-    admin = aliAdmin()
     uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    if admin is None:
+        return
+    organizator2 = aliOrganizator()
+
     ime = request.forms.ime
     priimek = request.forms.priimek
     uporabnisko_ime = request.forms.username
@@ -770,19 +808,22 @@ def uredi_organizatorja_post(emso):
     cur.execute(
             "SELECT * FROM organizator_letov")
     organizatorji = cur.fetchall()
-    return template('pregled_organizatorjev.html', organizatorji=organizatorji, admin = admin, uporabnik = uporabnik)
+    return template('pregled_organizatorjev.html', organizatorji=organizatorji, admin = admin, uporabnik = uporabnik, organizator = organizator2)
 
 
 @get('/odstrani_organizatorja/<emso>')
 def odstrani_organizatorja(emso):
-    admin = aliAdmin()
     uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    if admin is None:
+        return
+    organizator = aliOrganizator()
     cur.execute("DELETE FROM organizator_letov WHERE emso = %s;", (emso, ))
     conn.commit()
     cur.execute(
             "SELECT * FROM organizator_letov")
     organizatorji = cur.fetchall()
-    return template('pregled_organizatorjev.html', organizatorji=organizatorji, admin = admin, uporabnik = uporabnik)
+    return template('pregled_organizatorjev.html', organizatorji=organizatorji, admin = admin, uporabnik = uporabnik, organizator = organizator)
 
 ############################################
 ### Povezava z bazo

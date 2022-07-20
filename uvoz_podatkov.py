@@ -31,3 +31,15 @@ importSQL('podatki/delavci_na_letu.sql')
 importSQL('podatki/uporabnik.sql')
 
 
+# zniža cene last minute letov
+cur.execute(
+        "SELECT cena, stevilka_leta FROM let WHERE  datum_odhoda < CURRENT_DATE + INTERVAL '3 day' ORDER BY datum_odhoda, ura_odhoda;")
+leti = cur.fetchall()
+for let in leti:
+    cena, stevilka_leta = let
+    print(cena)
+    for i in range(2):
+        cena[i]= round(int(cena[i])*0.5,1)
+    cur.execute("UPDATE let SET cena = %s WHERE stevilka_leta = %s", (cena ,stevilka_leta))
+    conn.commit()
+    leti.remove(let)

@@ -4,7 +4,7 @@
 % setdefault('admin', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 <div class="container">
-    <form action="/uredi_uporabnika/{{uporabnik[0]}}" method="post" autocomplete="off">
+    <form action="/uredi_uporabnika/{{uporabnik2[0]}}" method="post" autocomplete="off">
 
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -17,14 +17,6 @@
             <div class="form-group col-md-6">
                 <label for="priimek">Priimek</label>
                 <input id="priimek" name="priimek" type="text" class="form-control" required
-                    oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-8">
-                <label for="emso">Emšo</label>
-                <input id="emso" name="emso" type="text" class="form-control" required
                     oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Obvezno polje')" />
             </div>
         </div>
