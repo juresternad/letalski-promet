@@ -1,7 +1,7 @@
 import psycopg2, psycopg2.extensions, psycopg2.extras 
 from psycopg2 import sql
 import csv
-# from auth_public import *
+from auth_public import *
 from auth_g import *
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
