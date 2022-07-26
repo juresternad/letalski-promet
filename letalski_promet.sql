@@ -83,10 +83,10 @@ GRANT ALL ON SCHEMA public TO jurest;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO jurest;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO jurest;
 
-
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO javnost;
-GRANT INSERT ON uporabnik TO javnost;
-GRANT INSERT ON transakcija TO javnost;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
 GRANT UPDATE ON uporabnik TO javnost;
+GRANT INSERT ON uporabnik TO javnost;
 GRANT INSERT ON karta TO javnost;
+
+
