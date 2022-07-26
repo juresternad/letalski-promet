@@ -1,5 +1,17 @@
+% setdefault('napaka', '')
+% setdefault('uporabnik', '')
+% setdefault('organizator', '')
+% setdefault('admin', '')
+
 <!doctype html>
 <html lang="sl">
+
+    <style>
+        body {
+            background-image: url('{{url("static", filename="/images/ozadje.jpeg")}}');
+            background-attachment: fixed;  
+        }
+    </style>
 
 
 <head>
@@ -10,15 +22,10 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <title>ads</title>
+        <title>Letalske karte</title>
     <!-- <link rel="stylesheet" type="text/css" href="/static/stili.css" /> -->
 
-    <style>
-        body {
-          background-image: url('/static/images/ozadje.jpeg');
-          background-attachment: fixed;  
-        }
-    </style>
+    
 
 </head>
 
@@ -31,11 +38,11 @@
         </div>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                %if uporabnik == None and organizator == None and admin ==None:
+                % if uporabnik == None and organizator == None and admin ==None:
                 <li> <a href="/prijava">Prijava</a> 
                     <a href="/registracija">Registracija</a> 
                 </li>
-                %elif uporabnik != None and organizator == None and admin != None:
+                % elif uporabnik != None and organizator == None and admin != None:
                 <div class="container-fluid" id="navbarNavAltMarkup">
                     <a class="navbar-item" href="/pregled_uporabnikov">Uporabniki</a>
                 </div>
@@ -118,3 +125,4 @@
 </body>
 
 </html>
+
