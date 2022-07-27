@@ -5,8 +5,8 @@ from regex import P
 from bottleext import *
 import os
 import hashlib
-# import auth_g
-import auth_public as auth_g
+import auth_g
+# import auth_public as auth_g
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -139,7 +139,7 @@ def kupi_karto(id_leta):
             return template('uspesen_nakup.html', iz=iz, do=do, datum=datum, ura=ura, st_kart=st_kart)
         return "Žal ni več prostih sedežev. Za izbrani razred je trenutno na voljo samo še {}.".format(st_pro_mest[i])
     else:
-        redirect(url('prijava'))
+        redirect(url('/prijava'))
 
 
 
@@ -225,13 +225,13 @@ def registracija_post():
     geslo2 = request.forms.password2
     if geslo != geslo2:
         nastaviSporocilo('Gesli se ne ujemata.')
-        redirect(url('registracija'))
+        redirect(url('/registracija'))
     if len(geslo) < 4:
         nastaviSporocilo('Geslo mora imeti vsaj 4 znake.')
-        redirect(url('registracija'))
+        redirect(url('/registracija'))
     if emso is None or uporabnisko_ime is None or geslo is None or geslo2 is None:
         nastaviSporocilo('Vnesi vse podatke')
-        redirect(url('registracija'))
+        redirect(url('/registracija'))
 
     cur = conn.cursor()
     uporabnik = None
@@ -242,7 +242,7 @@ def registracija_post():
         uporabnik = None
     if uporabnik is not None:
         nastaviSporocilo('Uporabnik s tem emšom obstaja')
-        redirect(url('registracija'))
+        redirect(url('/registracija'))
     try:
         cur = conn.cursor()
         uporabnik = cur.execute('SELECT * FROM uporabnik WHERE uporabnisko_ime = %s', (uporabnisko_ime, ))
@@ -250,14 +250,14 @@ def registracija_post():
         uporabnik = None
     if uporabnik is not None:
         nastaviSporocilo('Uporabnisko ime že obstaja!')
-        redirect(url('registracija'))
+        redirect(url('/registracija'))
 
     zgostitev = hashGesla(geslo)
     cur.execute('INSERT INTO uporabnik (emso, ime, priimek, email, uporabnisko_ime, geslo) VALUES (%s,%s,%s,%s,%s,%s);',
                 (emso, ime, priimek, email, uporabnisko_ime, zgostitev))
     conn.commit()
     response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
-    redirect(url(''))
+    redirect(url('/'))
 
 
 @get('/prijava')
@@ -290,27 +290,27 @@ def prijava_post():
     cur = conn.cursor()
     if potnik_geslo is None and organizator_geslo is None and geslo != potnik_geslo:
         nastaviSporocilo('Uporabnik ne obstaja')
-        redirect(url('prijava'))
+        redirect(url('/prijava'))
         return
     elif hashGesla(geslo) != potnik_geslo and hashGesla(geslo) != organizator_geslo and geslo != potnik_geslo: 
         nastaviSporocilo('Uporabniško ime in geslo se ne ujemata')
-        redirect(url('prijava'))
+        redirect(url('/prijava'))
         return
     response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
     if geslo == potnik_geslo:
         response.set_cookie('uporabnisko_ime', uporabnisko_ime, secret=skrivnost)
-        redirect(url(''))
+        redirect(url('/'))
     elif potnik_geslo is None:
-        redirect(url(''))
+        redirect(url('/'))
     elif organizator_geslo is None:
-        redirect(url('')) # redirect to page you came from
+        redirect(url('/'))
 
 
 
 @get('/odjava')
 def odjava_get():
     response.delete_cookie('uporabnisko_ime')
-    redirect(url('index'))
+    redirect(url('/index'))
 
 @get('/sprememba_gesla')
 def sprememba_gesla():
@@ -324,11 +324,11 @@ def sprememba_gesla_post():
     geslo2 = request.forms.geslo2
     if geslo1 != geslo2:
         nastaviSporocilo('Gesli se ne ujemata') 
-        redirect(url('sprememba_gesla'))
+        redirect(url('/sprememba_gesla'))
         return
     if len(geslo1) < 4:
         nastaviSporocilo('Geslo mora imeti vsaj 4 znake.') 
-        redirect(url('sprememba_gesla'))
+        redirect(url('/sprememba_gesla'))
         return 
     cur = conn.cursor()
     if uporabnisko_ime:    
@@ -350,14 +350,14 @@ def sprememba_gesla_post():
             zgostitev1 = hashGesla(geslo1)
             cur.execute("UPDATE organizator_letov SET geslo = %s WHERE  = %s", (zgostitev1 ,uporabnisko_ime))
             conn.commit()
-            return redirect(url('prijava'))
+            return redirect(url('/prijava'))
         if uporabnik2:
             zgostitev2 = hashGesla(geslo2)
             cur.execute("UPDATE uporabnik SET  geslo = %s WHERE uporabnisko_ime = %s", (zgostitev2 ,uporabnisko_ime))
             conn.commit()
-            return redirect(url('prijava'))
+            return redirect(url('/prijava'))
     nastaviSporocilo('Obvezna registracija') 
-    redirect(url('registracija'))
+    redirect(url('/registracija'))
 
 ############################################
 ### Profili
@@ -393,7 +393,7 @@ def kupljene_karte():
             leti.append(cur.fetchone())
         return template('kupljene_karte.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
     else:
-        redirect(url('prijava'))
+        redirect(url('/prijava'))
 
 @get('/profil_organizatorja')
 def profil_organizatorja():
@@ -437,7 +437,7 @@ def dodaj_organizatorja_post():
         organizatorr = None
     if organizatorr is not None:
         nastaviSporocilo('Dodajanje organizatorja ni možno')
-        redirect(url('dodaj_organizatorja'))
+        redirect(url('/dodaj_organizatorja'))
         return
     try:
         cur = conn.cursor()
@@ -455,12 +455,12 @@ def dodaj_organizatorja_post():
         organizatorr = None
     if organizatorr is not None:
         nastaviSporocilo('Uporabnisko ime že obstaja!')
-        redirect(url('dodaj_organizatorja'))
+        redirect(url('/dodaj_organizatorja'))
         return
     zgostitev = hashGesla(geslo)
     cur.execute("INSERT INTO organizator_letov (emso, ime, priimek, uporabnisko_ime, geslo) VALUES (%s, %s, %s, %s, %s);", (emso, ime, priimek, uporabnisko_ime, zgostitev))
     conn.commit()
-    redirect(url('pregled_organizatorjev'))
+    redirect(url('/pregled_organizatorjev'))
 
 
 
@@ -499,7 +499,7 @@ def dodaj_let_post():
     cur = conn.cursor()
     cur.execute("INSERT INTO let (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, st_zasedenih_mest, st_prostih_mest) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, letalo_id, ekipa, cena, [0,0,0], prosta  ))
     conn.commit()
-    redirect(url(''))
+    redirect(url('/'))
 ####################################################
 
 ############################################
@@ -530,7 +530,7 @@ def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
         cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta, ))
         pot_tja.append(cur.fetchone())
 
-    cur.execute("SELECT stevilka_leta, pristajalno_letalisce, vzletno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_prihoda, datum_prihoda ))
+    cur.execute("SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_prihoda, datum_prihoda ))
     leti2 = cur.fetchall()
     M = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
     for let2 in leti2 :
@@ -542,13 +542,12 @@ def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
         d22 = datetime.combine(datum_prihoda2, ura_prihoda2)
         t22 = datetime.timestamp(d22)
         M[slovar_letalisc[vzletno_letalisce2]].append((cene2[int(razred)], t12, t22, slovar_letalisc[pristajalno_letalisce2], stevilka_leta2))
-    s2, t2 = slovar_letalisc[" ".join(iz.split("-"))], slovar_letalisc[" ".join(do.split("-"))]
+    s2, t2 = slovar_letalisc[" ".join(do.split("-"))], slovar_letalisc[" ".join(iz.split("-"))]
     cena_potovanja_nazaj, pot2 = dijkstraish(M, s2, t2)
     pot_nazaj = []
     for st_leta2 in pot2:
         cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta2, ))
         pot_nazaj.append(cur.fetchone())
-    pot_nazaj = pot_nazaj[::-1]
     return template('dijkstra_let.html', cena_potovanja=cena_potovanja,cena_potovanja_nazaj=cena_potovanja_nazaj, pot_tja=pot_tja,pot_nazaj=pot_nazaj,razred=razred, enosmeren = enosmeren)
 
     
