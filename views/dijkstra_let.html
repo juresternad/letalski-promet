@@ -17,7 +17,7 @@
     <b>Prihod: </b>{{let[3]}} {{let[5]}} <br>
     <b>Cena karte: </b> {{let[6][int(razred)]}} eur  <br>
 
-    <button action="/kupi/{{let[7]}}" method="post">
+    <button action="{{url('nakup_karte',id_leta=let[7])}}" method="post">
         <a onclick="window.open('/kupi/{{let[7]}}?', 
         'newwindow', 
         'width=600,height=600'); 
@@ -45,7 +45,7 @@
     <b>Prihod: </b>{{let[3]}} {{let[5]}} <br>
     <b>Cena karte: </b> {{let[6][int(razred)]}} eur  <br>
 
-    <button action="/kupi/{{let[7]}}" method="post">
+    <button action="{{url('nakup_karte',id_leta=let[7])}}"method="post">
         <a onclick="window.open('/kupi/{{let[7]}}?', 
         'newwindow', 
         'width=600,height=600'); 

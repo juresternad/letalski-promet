@@ -14,7 +14,7 @@
         <br><br>
         <b>Razred:</b>
 
-        <form action="/kupi/{{let[0]}}" method="post">
+        <form action="{{url('kupi_karto',id_leta=let[0])}}"method="post">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="razred" id="economy" value="economy" checked="checked">
                 <label class="form-check-label" for="economy">Economy</label>

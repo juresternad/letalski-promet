@@ -18,10 +18,10 @@
             <b>priimek: </b>{{organizator[2]}} <br>
             <b>uporabnisko_ime: </b>{{organizator[3]}} <br>
             <b>geslo: </b>{{organizator[4]}} <br>
-            <form action="/uredi_organizatorja/{{organizator[0]}}" method="get">
+            <form action="{{url('uredi_organizatorja',emso=organizator[0])}}" method="get">
                 <button type="submit">Uredi</button>
             </form>
-            <form action="/odstrani_organizatorja/{{organizator[0]}}" method="get">
+            <form action="{{url('odstrani_organizatorja',emso=organizator[0])}}" method="get">
                 <button type="submit">Odstrani</button>
             </form>
         </li>

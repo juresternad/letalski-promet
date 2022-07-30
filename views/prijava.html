@@ -5,7 +5,7 @@
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 <div class="container">
   <br><br><br><br>
-  <form action="/prijava" method="post" autocomplete="off">
+  <form action="{{url('prijava_post')}}"  method="post" autocomplete="off">
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="username">Uporabniško ime</label>

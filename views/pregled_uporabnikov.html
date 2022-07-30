@@ -19,10 +19,10 @@
             <b>email: </b>{{uporabnik[3]}} <br>
             <b>uporabnisko_ime: </b>{{uporabnik[4]}} <br>
             <b>geslo: </b>{{uporabnik[5]}} <br>
-            <form action="/uredi_uporabnika/{{uporabnik[0]}}" method="get">
+            <form action="{{url('uredi_uporabnika',emso=uporabnik[0])}}" method="get">
                 <button type="submit">Uredi</button>
             </form>
-            <form action="/odstrani_uporabnika/{{uporabnik[0]}}" method="get">
+            <form action="{{url('odstrani_uporabnika',emso=uporabnik[0])}}" method="get">
                 <button type="submit">Odstrani</button>
             </form>
         </li>

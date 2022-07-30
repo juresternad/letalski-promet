@@ -4,7 +4,7 @@
 % setdefault('admin', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 <div class="container">
-    <form action="/registracija" method="post" autocomplete="off">
+    <form action="{{url('registracija_post')}}"method="post" autocomplete="off">
 
         <div class="form-row">
             <div class="form-group col-md-6">
@@ -75,6 +75,6 @@
 </div>
 
 <div class="form-row d-flex">
-    <p>Že imate račun? <a href="/prijava">Prijava</a>
+    <p>Že imate račun? <a href="{{url('prijava_get')}}">Prijava</a>
 
 </div>

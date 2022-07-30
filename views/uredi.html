@@ -5,7 +5,7 @@
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
 
 <div class="container">
-    <form action="/uredi/{{let[0]}}" method="post" autocomplete="off">
+    <form action="{{url('uredi_post',id_leta=let[0])}}" method="post" autocomplete="off">
 
         <div class="form-row">
             <div class="form-group col-md-6">

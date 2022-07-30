@@ -17,7 +17,7 @@
             <b>Kraj prihoda: </b>{{let[2]}} <br>
             <b>Datum odhoda: </b>{{let[3]}} {{let[5]}} <br>
             <b>Že od:</b> {{let[9][0]}} evrov 
-            <form action="/kupi/{{let[0]}}" method="get">
+            <form action="{{url('nakup_karte',id_leta=let[0])}}" method="get">
                 <button type="submit">Kupi</button>
             </form>
         </li>

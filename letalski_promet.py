@@ -5,8 +5,8 @@ from regex import P
 from bottleext import *
 import os
 import hashlib
-#import auth_g
-import auth_public as auth_g
+import auth_g
+#import auth_public as auth_g
 
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
@@ -87,7 +87,7 @@ def carterski():
 
 
 
-@post('/leti/')  
+@post('/leti')  
 def let():
     iz = request.forms.iz
     do = request.forms.do
