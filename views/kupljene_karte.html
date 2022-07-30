@@ -3,6 +3,7 @@
 % setdefault('organizator', '')
 % setdefault('admin', '')
 % rebase('base.html', napaka = napaka, uporabnik = uporabnik, organizator = organizator, admin = admin)
+
 <div class="container">
     <h1>Kupljene karte</h1>
     <table id="kupljene_karte" class="table table-hover">
@@ -11,7 +12,6 @@
         <th>Vzletno letališče</th>
         <th>Pristajalno letališče</th>
         <th>Čas odhoda</th>
-        <!-- TODO <th>Telefon</th> -->
       </tr>
       %for (id, vzletno, pristajalno, datum_odhoda, ura_odhoda) in leti:
       <tr>
@@ -24,4 +24,4 @@
     </table>
     
   
-  </div>
+</div>

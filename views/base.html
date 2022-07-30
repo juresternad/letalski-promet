@@ -39,31 +39,32 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 % if uporabnik == None and organizator == None and admin ==None:
-                <li> <a href="/prijava">Prijava</a> 
-                    <a href="/registracija">Registracija</a> 
+                <li> <a href="{{url('prijava_get')}}">Prijava</a> 
+                    <a href="{{url('registracija_get')}}">Registracija</a> 
                 </li>
                 % elif uporabnik != None and organizator == None and admin != None:
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/pregled_uporabnikov">Uporabniki</a>
+                    <a class="navbar-item" href="{{url('pregled_uporabnikov')}}">Uporabniki</a>
+                    
                 </div>
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/pregled_organizatorjev">Organizatorji</a>
+                    <a class="navbar-item" href="{{url('pregled_organizatorjev')}}">Organizatorji</a>
                 </div>
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/pregled_letov">Leti</a>
+                    <a class="navbar-item" href="{{url('pregled_letov')}}">Leti</a>
                 </div>
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/dodaj_organizatorja">Dodaj organizatorja</a>
+                    <a class="navbar-item" href="{{url('dodaj_organizatorja_get')}}">Dodaj organizatorja</a>
                 </div>
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
+                    <a class="navbar-item" href="{{url('dodaj_let_get')}}">Dodaj let</a>
                 </div>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                         &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp {{uporabnik[4]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                        <a class="dropdown-item" href="{{url('odjava_get')}}">Odjava</a>
                     </div>
                 </li>
                 %elif uporabnik != None and organizator ==None and admin ==None:
@@ -72,27 +73,27 @@
                         &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{uporabnik[4]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/profil_uporabnika">Moj profil</a>
-                        <a class="dropdown-item" href="/kupljene_karte">Kupljene karte</a>
-                        <a class="dropdown-item" href="/sprememba_gesla">Spremeni geslo</a>
-                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                        <a class="dropdown-item" href="{{url('profil_uporabnika')}}">Moj profil</a>
+                        <a class="dropdown-item" href="{{url('kupljene_karte')}}">Kupljene karte</a>
+                        <a class="dropdown-item" href="{{url('sprememba_gesla')}}">Spremeni geslo</a>
+                        <a class="dropdown-item" href="{{url('odjava_get')}}">Odjava</a>
                     </div>
                 </li>
                 %elif uporabnik == None and organizator !=None and admin == None:
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/dodaj_let">Dodaj let</a>
+                    <a class="navbar-item" href="{{url('dodaj_let_get')}}">Dodaj let</a>
                 </div>
                 <div class="container-fluid" id="navbarNavAltMarkup">
-                    <a class="navbar-item" href="/pregled_letov">Uredi let</a>
+                    <a class="navbar-item" href="{{url('pregled_letov')}}">Uredi let</a>
                 </div>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
                         &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp{{organizator[3]}}&nbsp &nbsp &nbsp &nbsp
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/profil_organizatorja">Moj profil</a>
-                        <a class="dropdown-item" href="/sprememba_gesla">Spremeni geslo</a>
-                        <a class="dropdown-item" href="/odjava">Odjava</a>
+                        <a class="dropdown-item" href="{{url('profil_organizatorja')}}">Moj profil</a>
+                        <a class="dropdown-item" href="{{url('sprememba_gesla')}}">Spremeni geslo</a>
+                        <a class="dropdown-item" href="{{url('odjava_get')}}">Odjava</a>
                     </div>
                 </li>
                 %end

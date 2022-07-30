@@ -310,12 +310,15 @@ def prijava_post():
 @get('/odjava')
 def odjava_get():
     response.delete_cookie('uporabnisko_ime')
-    redirect(url('/index'))
+    redirect(url('index'))
 
 @get('/sprememba_gesla')
 def sprememba_gesla():
     napaka = nastaviSporocilo()
-    return template('sprememba_gesla.html', napaka=napaka)
+    uporabnik = aliUporabnik()
+    organizator = aliOrganizator()
+    admin = aliAdmin()
+    return template('sprememba_gesla.html', napaka=napaka,uporabnik=uporabnik, organizator=organizator, admin = admin)
 
 @post('/sprememba_gesla')
 def sprememba_gesla_post():
@@ -365,44 +368,51 @@ def sprememba_gesla_post():
 
 @get('/profil_uporabnika')
 def profil_uporabnika():
+    admin = aliAdmin()
+    organizator= aliOrganizator()
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
         "SELECT emso, ime, priimek, email, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
-    uporabnik = cur.fetchall()
-    return template('profil_uporabnika.html', uporabnik=uporabnik, napaka=napaka)
+    uporabnik2 = cur.fetchall()
+    uporabnik = aliUporabnik()
+    return template('profil_uporabnika.html', uporabnik2=uporabnik2,uporabnik=uporabnik, napaka=napaka,admin=admin, organizator = organizator)
 
 
 @get('/kupljene_karte')
 def kupljene_karte():
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
+    uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    organizator= aliOrganizator()
     if username is not None:
         cur.execute(
             "SELECT emso, ime, priimek, uporabnisko_ime FROM uporabnik WHERE uporabnisko_ime = %s;", (username, ))
-        uporabnik = cur.fetchone()
         cur.execute(
             "SELECT * FROM karta WHERE uporabnisko_ime = %s;", (username, ))
         kupljene_karte = cur.fetchall()
         leti = []
-        # TODO mogoce je bolje ce naredi join in je tako samo ena poizvedba
         for karta in kupljene_karte:
             stevilka_leta = karta[4]
             cur.execute(
-            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s LIMIT 1;", (stevilka_leta, )) # order by datum_nakupa
+            "SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, ura_odhoda FROM let WHERE stevilka_leta = %s LIMIT 1;", (stevilka_leta, )) 
             leti.append(cur.fetchone())
-        return template('kupljene_karte.html', uporabnik=uporabnik, leti=leti, napaka=napaka)
+        return template('kupljene_karte.html', uporabnik=uporabnik, leti=leti, napaka=napaka,admin=admin, organizator = organizator)
     else:
         redirect(url('/prijava'))
 
 @get('/profil_organizatorja')
 def profil_organizatorja():
+    uporabnik = aliUporabnik()
+    admin = aliAdmin()
+    organizator= aliOrganizator()
     napaka = nastaviSporocilo()
     username = request.get_cookie("uporabnisko_ime", secret=skrivnost)
     cur.execute(
         "SELECT emso, ime, priimek, uporabnisko_ime FROM organizator_letov WHERE uporabnisko_ime = %s;", (username, ))
     organizator_letov = cur.fetchall()
-    return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka)
+    return template('profil_organizatorja.html', organizator_letov=organizator_letov, napaka=napaka,uporabnik=uporabnik, admin=admin, organizator = organizator)
 
 
 
