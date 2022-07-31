@@ -83,10 +83,8 @@ GRANT ALL ON SCHEMA public TO jurest;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO jurest;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO jurest;
 
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO javnost;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
-GRANT UPDATE ON uporabnik TO javnost;
-GRANT INSERT ON uporabnik TO javnost;
-GRANT INSERT ON karta TO javnost;
-
+GRANT ALL ON DATABASE sem2022_gasperk TO javnost;
+GRANT ALL ON SCHEMA public TO javnost;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO javnost;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO javnost;
 

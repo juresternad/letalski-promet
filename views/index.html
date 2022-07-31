@@ -25,9 +25,9 @@
         <label for="pristajalisce">Pristajališče:</label>
         <input list="letalisca" name="do" autocomplete="on" placeholder="Ime letališča">
         <label for="start">Odletim:</label>
-        <input type="date" name="datum_odhoda" id="datum_odhod">
+        <input type="date" name="datum_odhoda" id="datum_odhoda">
         <label for="start">Priletim nazaj:</label>
-        <input type="date" name="datum_vrnitve" id="datum_vrnitev">
+        <input type="date" name="datum_vrnitve" id="datum_vrnitve">
         <button class="btn btn-primary" type="submit">Išči!</button>
         <label for="razred">Razred:</label>
         <select name="razred">
@@ -58,6 +58,6 @@
     </a> -->
 </div>
 <script>
-    document.getElementById('datum_odhod').value = new Date().toISOString().substring(0, 10);
-    document.getElementById('datum_vrnitev').value = new Date().toISOString().substring(0, 10);
+    document.getElementById('datum_odhoda').value = new Date().toISOString().substring(0, 10);
+    document.getElementById('datum_vrnitve').value = new Date().toISOString().substring(0, 10);
 </script>

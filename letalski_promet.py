@@ -96,7 +96,7 @@ def let():
     razred = request.forms.razred
     enosmeren = request.forms.enosmeren
     redirect(url('d', iz="-".join(iz.split()), do="-".join(do.split()), datum_odhoda=datum_odhoda,
-             datum_prihoda=datum_vrnitve, razred=razred, enosmeren=enosmeren))
+             datum_vrnitve=datum_vrnitve, razred=razred, enosmeren=enosmeren))
     
 
 ############################################
@@ -518,8 +518,8 @@ def dodaj_let_post():
 from dijkstra import slovar_letalisc, dijkstraish, pot
 from datetime import datetime
 
-@get('/d/<iz>/<do>/<datum_odhoda>/<datum_prihoda>/<razred>/<enosmeren>')
-def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
+@get('/d/<iz>/<do>/<datum_odhoda>/<datum_vrnitve>/<razred>/<enosmeren>')
+def d(iz, do, datum_odhoda, datum_vrnitve, razred=0, enosmeren=0):
 
     cur.execute("SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_odhoda, datum_odhoda))
     leti = cur.fetchall()
@@ -540,7 +540,7 @@ def d(iz, do, datum_odhoda, datum_prihoda, razred=0, enosmeren=0):
         cur.execute('SELECT vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena, stevilka_leta FROM let WHERE stevilka_leta = %s', (st_leta, ))
         pot_tja.append(cur.fetchone())
 
-    cur.execute("SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_prihoda, datum_prihoda ))
+    cur.execute("SELECT stevilka_leta, vzletno_letalisce, pristajalno_letalisce, datum_odhoda, datum_prihoda, ura_odhoda, ura_prihoda, cena FROM let WHERE datum_odhoda < %s:: date + INTERVAL '3 day' AND datum_odhoda >= %s:: date ;", (datum_vrnitve, datum_vrnitve ))
     leti2 = cur.fetchall()
     M = [[] for _ in range(len(slovar_letalisc))] # seznam sosednosti
     for let2 in leti2 :
